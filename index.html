@@ -549,7 +549,7 @@
                 }
             });
             
-            function searchPlayers(nickname, region) {
+            async function searchPlayers(nickname, region) {
                 // Show loader, hide message
                 loader.style.display = 'flex';
                 messageDiv.style.display = 'none';
@@ -557,66 +557,28 @@
                 resultCount.textContent = 'Searching...';
                 
                 // Construct API URL
-                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${(nickname)}&region=${region}`;
-                
-                // Make API request with CORS workaround
-                fetch(apiUrl, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Server response was not OK');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    loader.style.display = 'none';
-                    
-                    if (data.error) {
-                        showMessage('Error: ' + data.error, 'error');
-                        displayNoResults();
-                        return;
-                    }
-                    
-                    if (data.players && data.players.length > 0) {
-                        showMessage(`Found ${data.players.length} player(s)`, 'success');
-                        displayResults(data.players);
-                    } else {
-                        showMessage('No players found with that nickname', 'error');
-                        displayNoResults();
-                    }
-                })
-                .catch(error => {
-                    loader.style.display = 'none';
-                    // Try alternative approach with proxy
-                    showMessage('Trying alternative method...', 'error');
-                    fetchWithProxy(nickname, region);
-                });
-            }
-            
-            function fetchWithProxy(nickname, region) {
-                // Using a CORS proxy to bypass restrictions
-                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
                 const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
                 
-                fetch(proxyUrl + apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
+                try {
+                    // Try direct fetch first
+                    let response = await fetch(apiUrl, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    // If direct fetch fails, try with proxy
+                    if (!response.ok) {
+                        response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`);
                     }
-                })
-                .then(response => {
+                    
                     if (!response.ok) {
                         throw new Error('Server response was not OK');
                     }
-                    return response.json();
-                })
-                .then(data => {
+                    
+                    const data = await response.json();
                     loader.style.display = 'none';
                     
                     if (data.error) {
@@ -632,13 +594,12 @@
                         showMessage('No players found with that nickname', 'error');
                         displayNoResults();
                     }
-                })
-                .catch(error => {
+                } catch (error) {
                     loader.style.display = 'none';
                     showMessage('Search failed. Please check your connection and try again.', 'error');
                     console.error('Error:', error);
                     displayNoResults();
-                });
+                }
             }
             
             function displayResults(players) {
