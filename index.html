@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Satya Name Search - Free Fire Player Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         :root {
@@ -29,13 +28,12 @@
             background: var(--gradient-bg);
             color: var(--light);
             min-height: 100vh;
-            padding: 0;
+            padding: 20px;
             line-height: 1.6;
-            background-attachment: fixed;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -49,26 +47,21 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
-            animation: fadeIn 1s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .logo {
             font-size: 3.5rem;
             margin-bottom: 15px;
             color: var(--primary);
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
         }
         
         h1 {
             font-size: 2.8rem;
             margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
         }
         
         .welcome-text {
@@ -79,40 +72,13 @@
             line-height: 1.8;
         }
         
-        .highlight {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        
         .search-section {
-            flex: 1;
-            min-width: 300px;
             background: rgba(0, 0, 0, 0.4);
             padding: 30px;
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            animation: slideInLeft 1s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .info-section {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            animation: slideInRight 1s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
         }
         
         h2 {
@@ -122,38 +88,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        h3 {
-            font-size: 1.3rem;
-            margin: 25px 0 15px;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .feature-list {
-            list-style-type: none;
-            margin: 20px 0;
-        }
-        
-        .feature-list li {
-            margin-bottom: 15px;
-            padding-left: 30px;
-            position: relative;
-        }
-        
-        .feature-list li:before {
-            content: "✓";
-            color: var(--success);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
         }
         
         .form-group {
@@ -186,10 +120,6 @@
             box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
         }
         
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
         button {
             background: var(--gradient);
             color: white;
@@ -213,10 +143,6 @@
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
         }
         
-        button:active {
-            transform: translateY(0);
-        }
-        
         .results-section {
             background: rgba(0, 0, 0, 0.4);
             padding: 30px;
@@ -224,8 +150,6 @@
             margin-bottom: 40px;
             backdrop-filter: blur(10px);
             box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 1s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .results-header {
@@ -233,20 +157,18 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary);
         }
         
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
         
         .player-card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -266,20 +188,18 @@
         .player-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .player-name {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 15px;
             color: var(--primary);
-            font-family: 'Montserrat', sans-serif;
             word-break: break-word;
         }
         
         .player-info {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             padding-bottom: 8px;
@@ -289,12 +209,10 @@
         .info-label {
             font-weight: 600;
             opacity: 0.8;
-            color: var(--light);
         }
         
         .info-value {
             font-weight: 500;
-            color: var(--light);
         }
         
         .loader {
@@ -309,8 +227,8 @@
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top: 4px solid var(--primary);
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
@@ -321,25 +239,21 @@
         }
         
         .message {
-            padding: 20px;
-            border-radius: 12px;
-            margin: 25px 0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
             text-align: center;
             display: none;
-            font-weight: 500;
-            animation: fadeIn 0.5s ease;
         }
         
         .error {
             background: rgba(255, 71, 87, 0.2);
             border: 1px solid var(--primary);
-            color: var(--light);
         }
         
         .success {
             background: rgba(46, 213, 115, 0.2);
             border: 1px solid var(--success);
-            color: var(--light);
         }
         
         .empty-state {
@@ -349,70 +263,24 @@
         }
         
         .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             color: var(--secondary);
         }
         
         footer {
             text-align: center;
             margin-top: 40px;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer-text {
-            opacity: 0.8;
-            font-size: 0.95rem;
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideInLeft {
-            from { 
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from { 
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateX(0);
-            }
+            opacity: 0.7;
         }
         
         @media (max-width: 768px) {
-            .content {
-                flex-direction: column;
+            .results-grid {
+                grid-template-columns: 1fr;
             }
             
             h1 {
                 font-size: 2.2rem;
-            }
-            
-            .logo {
-                font-size: 2.8rem;
-            }
-            
-            .results-grid {
-                grid-template-columns: 1fr;
             }
             
             .results-header {
@@ -431,57 +299,34 @@
             </div>
             <h1>Welcome to Satya Name Search</h1>
             <p class="welcome-text">
-                The most advanced <span class="highlight">Free Fire</span> player search tool. 
-                Find any player instantly with accurate details including account ID, level, region, and last login time.
+                The most advanced Free Fire player search tool. Find any player instantly with accurate details.
             </p>
         </header>
         
-        <div class="content">
-            <section class="search-section">
-                <h2><i class="fas fa-search"></i> Player Search</h2>
-                
-                <div class="form-group">
-                    <label for="nickname"><i class="fas fa-user"></i> Player Nickname</label>
-                    <input type="text" id="nickname" placeholder="Enter player nickname" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="region"><i class="fas fa-globe"></i> Select Region</label>
-                    <select id="region">
-                        <option value="">Select a region</option>
-                        <option value="IND">India (IND)</option>
-                        <option value="BR">Brazil (BR)</option>
-                        <option value="US">United States (US)</option>
-                        <option value="SAC">South America Central (SAC)</option>
-                        <option value="NA">North America (NA)</option>
-                        <option value="OTHER">Other Regions</option>
-                    </select>
-                </div>
-                
-                <button id="search-btn">
-                    <i class="fas fa-search"></i> Search Player
-                </button>
-            </section>
+        <section class="search-section">
+            <h2><i class="fas fa-search"></i> Player Search</h2>
             
-            <section class="info-section">
-                <h2><i class="fas fa-info-circle"></i> How It Works</h2>
-                
-                <h3><i class="fas fa-lightbulb"></i> Simple Search</h3>
-                <p>Enter any Free Fire player nickname and select their region to find their account details.</p>
-                
-                <h3><i class="fas fa-bolt"></i> Instant Results</h3>
-                <p>Get accurate player information in seconds:</p>
-                <ul class="feature-list">
-                    <li>Account ID</li>
-                    <li>Player Level</li>
-                    <li>Region Information</li>
-                    <li>Last Login Time</li>
-                </ul>
-                
-                <h3><i class="fas fa-shield-alt"></i> Reliable Data</h3>
-                <p>Our advanced system connects directly to Free Fire servers to fetch the most up-to-date player information.</p>
-            </section>
-        </div>
+            <div class="form-group">
+                <label for="nickname"><i class="fas fa-user"></i> Player Nickname</label>
+                <input type="text" id="nickname" placeholder="Enter player nickname" value="satya">
+            </div>
+            
+            <div class="form-group">
+                <label for="region"><i class="fas fa-globe"></i> Select Region</label>
+                <select id="region">
+                    <option value="IND">India (IND)</option>
+                    <option value="BR">Brazil (BR)</option>
+                    <option value="US">United States (US)</option>
+                    <option value="SAC">South America Central (SAC)</option>
+                    <option value="NA">North America (NA)</option>
+                    <option value="OTHER">Other Regions</option>
+                </select>
+            </div>
+            
+            <button id="search-btn">
+                <i class="fas fa-search"></i> Search Player
+            </button>
+        </section>
         
         <div class="loader" id="loader">
             <div class="loader-spinner"></div>
@@ -490,7 +335,7 @@
         
         <div class="message" id="message"></div>
         
-        <section class="results-section" id="results-section">
+        <section class="results-section">
             <div class="results-header">
                 <h2><i class="fas fa-users"></i> Search Results</h2>
                 <span id="result-count">0 players found</span>
@@ -499,13 +344,13 @@
             <div class="results-grid" id="results-container">
                 <div class="empty-state">
                     <i class="fas fa-search"></i>
-                    <p>Enter a player nickname and region to search</p>
+                    <p>Enter a player nickname and click search to see results</p>
                 </div>
             </div>
         </section>
         
         <footer>
-            <p class="footer-text">© 2023 Satya Name Search | Advanced Free Fire Player Search Tool</p>
+            <p>© 2023 Satya Name Search | Advanced Free Fire Player Search Tool</p>
         </footer>
     </div>
 
@@ -518,67 +363,46 @@
             const messageDiv = document.getElementById('message');
             const loader = document.getElementById('loader');
             const resultCount = document.getElementById('result-count');
-            const resultsSection = document.getElementById('results-section');
             
-            // Focus on nickname input when page loads
-            nicknameInput.focus();
-            
+            // Set up event listener for the search button
             searchBtn.addEventListener('click', function() {
                 const nickname = nicknameInput.value.trim();
                 const region = regionSelect.value;
                 
                 if (!nickname) {
                     showMessage('Please enter a player nickname', 'error');
-                    nicknameInput.focus();
-                    return;
-                }
-                
-                if (!region) {
-                    showMessage('Please select a region', 'error');
-                    regionSelect.focus();
                     return;
                 }
                 
                 searchPlayers(nickname, region);
             });
             
-            // Also search when pressing Enter in the input field
-            nicknameInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchBtn.click();
-                }
-            });
-            
+            // Function to search players
             async function searchPlayers(nickname, region) {
-                // Show loader, hide message
+                // Show loader, hide message and clear previous results
                 loader.style.display = 'flex';
                 messageDiv.style.display = 'none';
                 resultsContainer.innerHTML = '';
                 resultCount.textContent = 'Searching...';
                 
-                // Construct API URL
-                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
-                
                 try {
-                    // Try direct fetch first
-                    let response = await fetch(apiUrl, {
+                    // Use a proxy to avoid CORS issues
+                    const proxyUrl = 'https://corsproxy.io/?';
+                    const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
+                    
+                    const response = await fetch(proxyUrl + apiUrl, {
                         method: 'GET',
-                        mode: 'cors',
                         headers: {
-                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
                         }
                     });
                     
-                    // If direct fetch fails, try with proxy
                     if (!response.ok) {
-                        response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`);
-                    }
-                    
-                    if (!response.ok) {
-                        throw new Error('Server response was not OK');
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
                     }
                     
                     const data = await response.json();
+                    
                     loader.style.display = 'none';
                     
                     if (data.error) {
@@ -596,12 +420,13 @@
                     }
                 } catch (error) {
                     loader.style.display = 'none';
-                    showMessage('Search failed. Please check your connection and try again.', 'error');
+                    showMessage('Search failed: ' + error.message, 'error');
                     console.error('Error:', error);
                     displayNoResults();
                 }
             }
             
+            // Function to display results
             function displayResults(players) {
                 resultsContainer.innerHTML = '';
                 resultCount.textContent = `${players.length} player(s) found`;
@@ -614,7 +439,7 @@
                     let lastLogin = 'Unknown';
                     if (player.lastLogin) {
                         const loginDate = new Date(player.lastLogin * 1000);
-                        lastLogin = loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString();
+                        lastLogin = loginDate.toLocaleDateString();
                     }
                     
                     playerCard.innerHTML = `
@@ -641,6 +466,7 @@
                 });
             }
             
+            // Function to display no results
             function displayNoResults() {
                 resultsContainer.innerHTML = `
                     <div class="empty-state">
@@ -651,6 +477,7 @@
                 resultCount.textContent = '0 players found';
             }
             
+            // Function to show messages
             function showMessage(text, type) {
                 messageDiv.textContent = text;
                 messageDiv.className = `message ${type}`;
@@ -664,6 +491,7 @@
                 }
             }
             
+            // Function to escape HTML characters
             function escapeHtml(unsafe) {
                 if (!unsafe) return '';
                 return unsafe
@@ -673,6 +501,11 @@
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#039;");
             }
+            
+            // Auto-search with example when page loads
+            setTimeout(() => {
+                searchBtn.click();
+            }, 1000);
         });
     </script>
 </body>
