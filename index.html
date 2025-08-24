@@ -557,7 +557,7 @@
                 resultCount.textContent = 'Searching...';
                 
                 // Construct API URL
-                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
+                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${(nickname)}&region=${region}`;
                 
                 // Make API request with CORS workaround
                 fetch(apiUrl, {
