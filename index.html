@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Fire Name Search</title>
+    <title>Satya Name Search - Free Fire Player Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        :root {
+            --primary: #ff4757;
+            --secondary: #5352ed;
+            --dark: #2f3542;
+            --light: #f1f2f6;
+            --success: #2ed573;
+            --warning: #ffa502;
+            --gradient: linear-gradient(135deg, #ff4757, #5352ed);
         }
         
         body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: #fff;
+            color: var(--light);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
             line-height: 1.6;
         }
         
@@ -30,109 +41,153 @@
         header {
             text-align: center;
             margin-bottom: 30px;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
+            padding: 40px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
         }
         
         h1 {
             font-size: 2.8rem;
             margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         
-        .subtitle {
-            font-size: 1.3rem;
+        .welcome-text {
+            font-size: 1.2rem;
             opacity: 0.9;
-            margin-bottom: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
         }
         
-        .url-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            word-break: break-all;
-            font-family: monospace;
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
         }
         
         .content {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 30px;
+            margin-bottom: 40px;
         }
         
-        .instructions, .search-section {
+        .search-section {
             flex: 1;
             min-width: 300px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 20px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            animation: slideInLeft 1s ease;
+        }
+        
+        .info-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            animation: slideInRight 1s ease;
         }
         
         h2 {
             font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #ffcc00;
+            margin-bottom: 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 15px;
+            color: var(--secondary);
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        h3 {
-            font-size: 1.3rem;
-            margin: 20px 0 10px;
-            color: #ff7e5f;
+        .feature-list {
+            list-style-type: none;
+            margin: 20px 0;
         }
         
-        .step {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        .feature-list li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
         }
         
-        .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: #ff7e5f;
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
+        .feature-list li:before {
+            content: "✓";
+            color: var(--success);
+            position: absolute;
+            left: 0;
             font-weight: bold;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--light);
         }
         
         input, select {
             width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
             font-size: 16px;
-            color: #333;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         
         button {
-            background: #ff7e5f;
+            background: var(--gradient);
             color: white;
             border: none;
-            padding: 14px 25px;
-            border-radius: 8px;
+            padding: 16px 30px;
+            border-radius: 12px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
@@ -141,80 +196,112 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         button:hover {
-            background: #ff5a35;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
         }
         
         .results-section {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease;
         }
         
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
         }
         
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
         
         .player-card {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            transition: transform 0.3s ease;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .player-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
         }
         
         .player-card:hover {
             transform: translateY(-5px);
             background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .player-name {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            color: #ffcc00;
+            margin-bottom: 15px;
+            color: var(--primary);
         }
         
         .player-info {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .info-label {
             font-weight: 600;
             opacity: 0.8;
+            color: var(--light);
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: var(--light);
         }
         
         .loader {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            margin: 30px 0;
+            flex-direction: column;
+            align-items: center;
         }
         
         .loader-spinner {
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top: 5px solid #ff7e5f;
-            width: 50px;
-            height: 50px;
+            border-top: 4px solid var(--primary);
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin-bottom: 20px;
         }
         
         @keyframes spin {
@@ -223,35 +310,80 @@
         }
         
         .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
             text-align: center;
             display: none;
+            font-weight: 500;
+            animation: fadeIn 0.5s ease;
         }
         
         .error {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--light);
         }
         
         .success {
-            background: rgba(0, 255, 0, 0.2);
+            background: rgba(46, 213, 115, 0.2);
+            border: 1px solid var(--success);
+            color: var(--light);
         }
         
-        .example {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-family: monospace;
-            white-space: pre-wrap;
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
         }
         
         footer {
             text-align: center;
             margin-top: 40px;
-            opacity: 0.7;
-            font-size: 0.9rem;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer-text {
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInLeft {
+            from { 
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from { 
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         @media (max-width: 768px) {
@@ -263,8 +395,18 @@
                 font-size: 2.2rem;
             }
             
+            .logo {
+                font-size: 2.8rem;
+            }
+            
             .results-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
             }
         }
     </style>
@@ -272,73 +414,29 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-fire"></i> Free Fire Name Search</h1>
-            <p class="subtitle">Search for Free Fire players by nickname and region</p>
-            <div class="url-box">
-                API Endpoint: https://satya-name-search.vercel.app/search?nickname=NAME&region=REGION
+            <div class="logo">
+                <i class="fas fa-fire"></i>
             </div>
+            <h1>Welcome to Satya Name Search</h1>
+            <p class="welcome-text">
+                The most advanced <span class="highlight">Free Fire</span> player search tool. 
+                Find any player instantly with accurate details including account ID, level, region, and last login time.
+            </p>
         </header>
         
         <div class="content">
-            <section class="instructions">
-                <h2><i class="fas fa-info-circle"></i> How to Use</h2>
-                
-                <div class="step">
-                    <h3><span class="step-number">1</span> Direct API Usage</h3>
-                    <p>You can use the API directly by making a GET request to:</p>
-                    <div class="example">https://satya-name-search.vercel.app/search?nickname=PLAYER_NAME&region=REGION_CODE</div>
-                    <p>Replace <strong>PLAYER_NAME</strong> with the player's nickname and <strong>REGION_CODE</strong> with one of the region codes below.</p>
-                </div>
-                
-                <div class="step">
-                    <h3><span class="step-number">2</span> Region Codes</h3>
-                    <p>Use one of these region codes:</p>
-                    <ul>
-                        <li><strong>IND</strong> - India</li>
-                        <li><strong>BR</strong> - Brazil</li>
-                        <li><strong>US</strong> - United States</li>
-                        <li><strong>SAC</strong> - South America Central</li>
-                        <li><strong>NA</strong> - North America</li>
-                        <li><strong>OTHER</strong> - Other Regions</li>
-                    </ul>
-                </div>
-                
-                <div class="step">
-                    <h3><span class="step-number">3</span> Example API Calls</h3>
-                    <p>Search for a player named "ProGamer" in Brazil:</p>
-                    <div class="example">https://satya-name-search.vercel.app/search?nickname=ProGamer&region=BR</div>
-                    <p>Search for a player named "John" in India:</p>
-                    <div class="example">https://satya-name-search.vercel.app/search?nickname=John&region=IND</div>
-                </div>
-                
-                <div class="step">
-                    <h3><span class="step-number">4</span> Response Format</h3>
-                    <p>The API returns JSON data with player information:</p>
-                    <div class="example">{
-  "players": [
-    {
-      "accountId": "1234567890",
-      "nickname": "ProGamer",
-      "region": "BR",
-      "level": 45,
-      "lastLogin": 1678901234
-    }
-  ]
-}</div>
-                </div>
-            </section>
-            
             <section class="search-section">
-                <h2><i class="fas fa-search"></i> Try It Out</h2>
+                <h2><i class="fas fa-search"></i> Player Search</h2>
                 
                 <div class="form-group">
-                    <label for="nickname">Player Nickname</label>
+                    <label for="nickname"><i class="fas fa-user"></i> Player Nickname</label>
                     <input type="text" id="nickname" placeholder="Enter player nickname" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="region">Select Region</label>
+                    <label for="region"><i class="fas fa-globe"></i> Select Region</label>
                     <select id="region">
+                        <option value="">Select a region</option>
                         <option value="IND">India (IND)</option>
                         <option value="BR">Brazil (BR)</option>
                         <option value="US">United States (US)</option>
@@ -352,32 +450,50 @@
                     <i class="fas fa-search"></i> Search Player
                 </button>
             </section>
+            
+            <section class="info-section">
+                <h2><i class="fas fa-info-circle"></i> How It Works</h2>
+                
+                <h3><i class="fas fa-lightbulb"></i> Simple Search</h3>
+                <p>Enter any Free Fire player nickname and select their region to find their account details.</p>
+                
+                <h3><i class="fas fa-bolt"></i> Instant Results</h3>
+                <p>Get accurate player information in seconds:</p>
+                <ul class="feature-list">
+                    <li>Account ID</li>
+                    <li>Player Level</li>
+                    <li>Region Information</li>
+                    <li>Last Login Time</li>
+                </ul>
+                
+                <h3><i class="fas fa-shield-alt"></i> Reliable Data</h3>
+                <p>Our advanced system connects directly to Free Fire servers to fetch the most up-to-date player information.</p>
+            </section>
         </div>
         
-        <div class="loader">
+        <div class="loader" id="loader">
             <div class="loader-spinner"></div>
-            <p>Searching for players...</p>
+            <p>Searching Free Fire database...</p>
         </div>
         
         <div class="message" id="message"></div>
         
-        <section class="results-section">
+        <section class="results-section" id="results-section">
             <div class="results-header">
                 <h2><i class="fas fa-users"></i> Search Results</h2>
                 <span id="result-count">0 players found</span>
             </div>
             
             <div class="results-grid" id="results-container">
-                <!-- Results will be displayed here -->
-                <div class="player-card" style="text-align: center; opacity: 0.7;">
-                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                    <p>Search for a player to see results here</p>
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>Enter a player nickname and region to search</p>
                 </div>
             </div>
         </section>
         
         <footer>
-            <p>Powered by Free Fire Search API | Deployed on Vercel</p>
+            <p class="footer-text">© 2023 Satya Name Search | Advanced Free Fire Player Search Tool</p>
         </footer>
     </div>
 
@@ -388,8 +504,12 @@
             const regionSelect = document.getElementById('region');
             const resultsContainer = document.getElementById('results-container');
             const messageDiv = document.getElementById('message');
-            const loader = document.querySelector('.loader');
+            const loader = document.getElementById('loader');
             const resultCount = document.getElementById('result-count');
+            const resultsSection = document.getElementById('results-section');
+            
+            // Focus on nickname input when page loads
+            nicknameInput.focus();
             
             searchBtn.addEventListener('click', function() {
                 const nickname = nicknameInput.value.trim();
@@ -397,18 +517,32 @@
                 
                 if (!nickname) {
                     showMessage('Please enter a player nickname', 'error');
+                    nicknameInput.focus();
+                    return;
+                }
+                
+                if (!region) {
+                    showMessage('Please select a region', 'error');
+                    regionSelect.focus();
                     return;
                 }
                 
                 searchPlayers(nickname, region);
             });
             
+            // Also search when pressing Enter in the input field
+            nicknameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchBtn.click();
+                }
+            });
+            
             function searchPlayers(nickname, region) {
-                // Show loader
-                loader.style.display = 'block';
+                // Show loader, hide message
+                loader.style.display = 'flex';
                 messageDiv.style.display = 'none';
                 resultsContainer.innerHTML = '';
-                resultCount.textContent = '0 players found';
+                resultCount.textContent = 'Searching...';
                 
                 // Construct API URL
                 const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
@@ -417,7 +551,7 @@
                 fetch(apiUrl)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error('Server response was not OK');
                         }
                         return response.json();
                     })
@@ -425,20 +559,24 @@
                         loader.style.display = 'none';
                         
                         if (data.error) {
-                            showMessage(data.error, 'error');
+                            showMessage('Error: ' + data.error, 'error');
+                            displayNoResults();
                             return;
                         }
                         
                         if (data.players && data.players.length > 0) {
+                            showMessage(`Found ${data.players.length} player(s)`, 'success');
                             displayResults(data.players);
                         } else {
                             showMessage('No players found with that nickname', 'error');
+                            displayNoResults();
                         }
                     })
                     .catch(error => {
                         loader.style.display = 'none';
-                        showMessage('Error fetching data: ' + error.message, 'error');
+                        showMessage('Search failed. Please check your connection and try again.', 'error');
                         console.error('Error:', error);
+                        displayNoResults();
                     });
             }
             
@@ -454,26 +592,26 @@
                     let lastLogin = 'Unknown';
                     if (player.lastLogin) {
                         const loginDate = new Date(player.lastLogin * 1000);
-                        lastLogin = loginDate.toLocaleDateString();
+                        lastLogin = loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString();
                     }
                     
                     playerCard.innerHTML = `
                         <h3 class="player-name">${player.nickname}</h3>
                         <div class="player-info">
                             <span class="info-label">Account ID:</span>
-                            <span>${player.accountId}</span>
+                            <span class="info-value">${player.accountId}</span>
                         </div>
                         <div class="player-info">
                             <span class="info-label">Region:</span>
-                            <span>${player.region}</span>
+                            <span class="info-value">${player.region}</span>
                         </div>
                         <div class="player-info">
                             <span class="info-label">Level:</span>
-                            <span>${player.level}</span>
+                            <span class="info-value">${player.level}</span>
                         </div>
                         <div class="player-info">
                             <span class="info-label">Last Login:</span>
-                            <span>${lastLogin}</span>
+                            <span class="info-value">${lastLogin}</span>
                         </div>
                     `;
                     
@@ -481,10 +619,27 @@
                 });
             }
             
+            function displayNoResults() {
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>No players found. Try a different nickname or region.</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 players found';
+            }
+            
             function showMessage(text, type) {
                 messageDiv.textContent = text;
                 messageDiv.className = `message ${type}`;
                 messageDiv.style.display = 'block';
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 5000);
+                }
             }
         });
     </script>
