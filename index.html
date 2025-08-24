@@ -314,7 +314,7 @@
             <div class="form-group">
                 <label for="region"><i class="fas fa-globe"></i> Select Region</label>
                 <select id="region">
-                    <option value="IND">India (IND)</option>
+                    <option value="IND" selected>India (IND)</option>
                     <option value="BR">Brazil (BR)</option>
                     <option value="US">United States (US)</option>
                     <option value="SAC">South America Central (SAC)</option>
@@ -377,53 +377,65 @@
                 searchPlayers(nickname, region);
             });
             
-            // Function to search players
-            async function searchPlayers(nickname, region) {
+            // Function to search players - using XMLHttpRequest to avoid CORS issues
+            function searchPlayers(nickname, region) {
                 // Show loader, hide message and clear previous results
                 loader.style.display = 'flex';
                 messageDiv.style.display = 'none';
                 resultsContainer.innerHTML = '';
                 resultCount.textContent = 'Searching...';
                 
-                try {
-                    // Use a proxy to avoid CORS issues
-                    const proxyUrl = 'https://corsproxy.io/?';
-                    const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
+                // Create the API URL
+                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
+                
+                // Use XMLHttpRequest which has better CORS handling
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', apiUrl, true);
+                
+                xhr.onload = function() {
+                    loader.style.display = 'none';
                     
-                    const response = await fetch(proxyUrl + apiUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            
+                            if (data.error) {
+                                showMessage('Error: ' + data.error, 'error');
+                                displayNoResults();
+                                return;
+                            }
+                            
+                            if (data.players && data.players.length > 0) {
+                                showMessage(`Found ${data.players.length} player(s)`, 'success');
+                                displayResults(data.players);
+                            } else {
+                                showMessage('No players found with that nickname', 'error');
+                                displayNoResults();
+                            }
+                        } catch (e) {
+                            showMessage('Error parsing response from server', 'error');
+                            displayNoResults();
                         }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    loader.style.display = 'none';
-                    
-                    if (data.error) {
-                        showMessage('Error: ' + data.error, 'error');
-                        displayNoResults();
-                        return;
-                    }
-                    
-                    if (data.players && data.players.length > 0) {
-                        showMessage(`Found ${data.players.length} player(s)`, 'success');
-                        displayResults(data.players);
                     } else {
-                        showMessage('No players found with that nickname', 'error');
+                        showMessage(`Server returned error: ${xhr.status}`, 'error');
                         displayNoResults();
                     }
-                } catch (error) {
+                };
+                
+                xhr.onerror = function() {
                     loader.style.display = 'none';
-                    showMessage('Search failed: ' + error.message, 'error');
-                    console.error('Error:', error);
+                    showMessage('Network error. Please check your connection.', 'error');
                     displayNoResults();
-                }
+                };
+                
+                xhr.timeout = 10000; // 10 second timeout
+                xhr.ontimeout = function() {
+                    loader.style.display = 'none';
+                    showMessage('Request timeout. Server is taking too long to respond.', 'error');
+                    displayNoResults();
+                };
+                
+                xhr.send();
             }
             
             // Function to display results
@@ -505,7 +517,7 @@
             // Auto-search with example when page loads
             setTimeout(() => {
                 searchBtn.click();
-            }, 1000);
+            }, 500);
         });
     </script>
 </body>
