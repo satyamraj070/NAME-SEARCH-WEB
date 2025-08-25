@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satya Name Search - Free Fire Player Search</title>
+    <title>Ultimate Telegram Music Bot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,512 +13,436 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        :root {
-            --primary: #ff4757;
-            --secondary: #5352ed;
-            --dark: #2f3542;
-            --light: #f1f2f6;
-            --success: #2ed573;
-            --warning: #ffa502;
-            --gradient: linear-gradient(135deg, #ff4757, #5352ed);
-            --gradient-bg: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-        }
-        
         body {
-            background: var(--gradient-bg);
-            color: var(--light);
-            min-height: 100vh;
-            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
             line-height: 1.6;
+            padding-bottom: 50px;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
         
         header {
             text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
             margin-bottom: 30px;
-            padding: 40px 30px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
+            border-bottom: 3px solid #e94560;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #e94560;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #b8b8d1;
         }
         
         .logo {
-            font-size: 3.5rem;
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #e94560;
             margin-bottom: 15px;
-            color: var(--primary);
         }
         
-        h1 {
-            font-size: 2.8rem;
+        .feature-card h3 {
+            font-size: 1.5rem;
             margin-bottom: 15px;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
+            color: #fff;
         }
         
-        .welcome-text {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.8;
+        .feature-card p {
+            color: #b8b8d1;
         }
         
-        .search-section {
-            background: rgba(0, 0, 0, 0.4);
+        .commands {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
             padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .commands h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #e94560;
+            font-size: 2rem;
+        }
+        
+        .command-category {
             margin-bottom: 30px;
         }
         
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            color: var(--primary);
+        .command-category h3 {
+            color: #0fccce;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #0fccce;
+        }
+        
+        .command-item {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
         }
         
-        .form-group {
-            margin-bottom: 25px;
+        .command {
+            flex: 1;
+            font-weight: bold;
+            color: #e94560;
         }
         
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--light);
+        .description {
+            flex: 2;
+            color: #b8b8d1;
         }
         
-        input, select {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            font-size: 16px;
-            color: var(--light);
-            transition: all 0.3s ease;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
-        }
-        
-        button {
-            background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 16px 30px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .results-section {
-            background: rgba(0, 0, 0, 0.4);
+        .setup {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
             padding: 30px;
-            border-radius: 20px;
             margin-bottom: 40px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
+        .setup h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #e94560;
+            font-size: 2rem;
         }
         
-        .results-grid {
+        .steps {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
         
-        .player-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .player-card:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient);
-        }
-        
-        .player-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .player-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--primary);
-            word-break: break-word;
-        }
-        
-        .player-info {
-            margin-bottom: 10px;
+        .step {
             display: flex;
-            justify-content: space-between;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: flex-start;
+            gap: 15px;
         }
         
-        .info-label {
-            font-weight: 600;
-            opacity: 0.8;
-        }
-        
-        .info-value {
-            font-weight: 500;
-        }
-        
-        .loader {
-            display: none;
-            text-align: center;
-            margin: 30px 0;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .loader-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
+        .step-number {
+            background: #e94560;
+            color: white;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            border-top: 4px solid var(--primary);
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .step-content h3 {
+            margin-bottom: 8px;
+            color: #0fccce;
         }
         
-        .message {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
+        .step-content p {
+            color: #b8b8d1;
+        }
+        
+        .cta {
             text-align: center;
-            display: none;
+            margin-top: 40px;
         }
         
-        .error {
-            background: rgba(255, 71, 87, 0.2);
-            border: 1px solid var(--primary);
+        .btn {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
         }
         
-        .success {
-            background: rgba(46, 213, 115, 0.2);
-            border: 1px solid var(--success);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            opacity: 0.7;
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--secondary);
+        .btn:hover {
+            background: #ff667d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
         }
         
         footer {
             text-align: center;
-            margin-top: 40px;
-            opacity: 0.7;
+            margin-top: 50px;
+            color: #b8b8d1;
         }
         
         @media (max-width: 768px) {
-            .results-grid {
+            .features {
                 grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2.2rem;
+            .command-item {
+                flex-direction: column;
             }
             
-            .results-header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+            .command, .description {
+                flex: auto;
+            }
+            
+            .command {
+                margin-bottom: 8px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <header>
+        <div class="container">
             <div class="logo">
-                <i class="fas fa-fire"></i>
+                <i class="fas fa-music"></i>
             </div>
-            <h1>Welcome to Satya Name Search</h1>
-            <p class="welcome-text">
-                The most advanced Free Fire player search tool. Find any player instantly with accurate details.
-            </p>
-        </header>
-        
-        <section class="search-section">
-            <h2><i class="fas fa-search"></i> Player Search</h2>
-            
-            <div class="form-group">
-                <label for="nickname"><i class="fas fa-user"></i> Player Nickname</label>
-                <input type="text" id="nickname" placeholder="Enter player nickname" value="satya">
-            </div>
-            
-            <div class="form-group">
-                <label for="region"><i class="fas fa-globe"></i> Select Region</label>
-                <select id="region">
-                    <option value="IND" selected>India (IND)</option>
-                    <option value="BR">Brazil (BR)</option>
-                    <option value="US">United States (US)</option>
-                    <option value="SAC">South America Central (SAC)</option>
-                    <option value="NA">North America (NA)</option>
-                    <option value="OTHER">Other Regions</option>
-                </select>
-            </div>
-            
-            <button id="search-btn">
-                <i class="fas fa-search"></i> Search Player
-            </button>
-        </section>
-        
-        <div class="loader" id="loader">
-            <div class="loader-spinner"></div>
-            <p>Searching Free Fire database...</p>
+            <h1>Ultimate Telegram Music Bot</h1>
+            <p>A feature-rich music bot for Telegram with YouTube, Spotify, and SoundCloud support, playlist management, and much more!</p>
         </div>
-        
-        <div class="message" id="message"></div>
-        
-        <section class="results-section">
-            <div class="results-header">
-                <h2><i class="fas fa-users"></i> Search Results</h2>
-                <span id="result-count">0 players found</span>
+    </header>
+
+    <div class="container">
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <h3>High Quality Audio</h3>
+                <p>Play music from YouTube, Spotify, SoundCloud and more with the best available audio quality.</p>
             </div>
             
-            <div class="results-grid" id="results-container">
-                <div class="empty-state">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h3>Playlist Support</h3>
+                <p>Create and manage your playlists, save your favorite tracks, and share them with friends.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
                     <i class="fas fa-search"></i>
-                    <p>Enter a player nickname and click search to see results</p>
+                </div>
+                <h3>Advanced Search</h3>
+                <p>Search for songs, artists, or albums directly from your chat with intuitive search commands.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h3>Audio Controls</h3>
+                <p>Adjust volume, bass, treble, and apply audio effects directly from the bot's controls.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Multi-Language</h3>
+                <p>Supports multiple languages including Hindi, English, Spanish, and many more.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Premium Features</h3>
+                <p>Unlock exclusive features with premium version including higher quality audio and no ads.</p>
+            </div>
+        </section>
+
+        <section class="commands">
+            <h2>Bot Commands</h2>
+            
+            <div class="command-category">
+                <h3>Music Playback</h3>
+                
+                <div class="command-item">
+                    <div class="command">/play [song]</div>
+                    <div class="description">Play a song from YouTube, Spotify, or SoundCloud</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/playlist</div>
+                    <div class="description">Play entire playlist from a link</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/radio</div>
+                    <div class="description">Start a live radio stream</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/search [query]</div>
+                    <div class="description">Search for a song and select from results</div>
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <h3>Playback Controls</h3>
+                
+                <div class="command-item">
+                    <div class="command">/pause</div>
+                    <div class="description">Pause the current playback</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/resume</div>
+                    <div class="description">Resume the paused playback</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/skip</div>
+                    <div class="description">Skip to the next song in queue</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/stop</div>
+                    <div class="description">Stop the playback and clear the queue</div>
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <h3>Queue Management</h3>
+                
+                <div class="command-item">
+                    <div class="command">/queue</div>
+                    <div class="description">Show the current music queue</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/shuffle</div>
+                    <div class="description">Shuffle the current queue</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/move [position]</div>
+                    <div class="description">Move a song to a different position in queue</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/remove [position]</div>
+                    <div class="description">Remove a song from the queue</div>
+                </div>
+            </div>
+            
+            <div class="command-category">
+                <h3>Additional Features</h3>
+                
+                <div class="command-item">
+                    <div class="command">/lyrics [song]</div>
+                    <div class="description">Get lyrics for the current song or specified song</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/video [song]</div>
+                    <div class="description">Get the video for the current song</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/effects</div>
+                    <div class="description">Apply audio effects like bass boost, echo, etc.</div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command">/settings</div>
+                    <div class="description">Change bot settings for your chat</div>
                 </div>
             </div>
         </section>
-        
-        <footer>
-            <p>© 2023 Satya Name Search | Advanced Free Fire Player Search Tool</p>
-        </footer>
+
+        <section class="setup">
+            <h2>How to Setup</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Find the Bot</h3>
+                        <p>Search for @UltimateMusicBot on Telegram or click the start button below.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Start the Bot</h3>
+                        <p>Open the chat with the bot and click the "Start" button to initialize it.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Add to Group</h3>
+                        <p>Add the bot to your group and give it necessary admin permissions.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Start Playing</h3>
+                        <p>Use commands like /play to start enjoying music in your group voice chat.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cta">
+                <a href="https://t.me/UltimateMusicBot" class="btn">Start Using Bot</a>
+            </div>
+        </section>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchBtn = document.getElementById('search-btn');
-            const nicknameInput = document.getElementById('nickname');
-            const regionSelect = document.getElementById('region');
-            const resultsContainer = document.getElementById('results-container');
-            const messageDiv = document.getElementById('message');
-            const loader = document.getElementById('loader');
-            const resultCount = document.getElementById('result-count');
-            
-            // Set up event listener for the search button
-            searchBtn.addEventListener('click', function() {
-                const nickname = nicknameInput.value.trim();
-                const region = regionSelect.value;
-                
-                if (!nickname) {
-                    showMessage('Please enter a player nickname', 'error');
-                    return;
-                }
-                
-                searchPlayers(nickname, region);
-            });
-            
-            // Function to search players - using XMLHttpRequest to avoid CORS issues
-            function searchPlayers(nickname, region) {
-                // Show loader, hide message and clear previous results
-                loader.style.display = 'flex';
-                messageDiv.style.display = 'none';
-                resultsContainer.innerHTML = '';
-                resultCount.textContent = 'Searching...';
-                
-                // Create the API URL
-                const apiUrl = `https://satya-name-search.vercel.app/search?nickname=${encodeURIComponent(nickname)}&region=${region}`;
-                
-                // Use XMLHttpRequest which has better CORS handling
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', apiUrl, true);
-                
-                xhr.onload = function() {
-                    loader.style.display = 'none';
-                    
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const data = JSON.parse(xhr.responseText);
-                            
-                            if (data.error) {
-                                showMessage('Error: ' + data.error, 'error');
-                                displayNoResults();
-                                return;
-                            }
-                            
-                            if (data.players && data.players.length > 0) {
-                                showMessage(`Found ${data.players.length} player(s)`, 'success');
-                                displayResults(data.players);
-                            } else {
-                                showMessage('No players found with that nickname', 'error');
-                                displayNoResults();
-                            }
-                        } catch (e) {
-                            showMessage('Error parsing response from server', 'error');
-                            displayNoResults();
-                        }
-                    } else {
-                        showMessage(`Server returned error: ${xhr.status}`, 'error');
-                        displayNoResults();
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    loader.style.display = 'none';
-                    showMessage('Network error. Please check your connection.', 'error');
-                    displayNoResults();
-                };
-                
-                xhr.timeout = 10000; // 10 second timeout
-                xhr.ontimeout = function() {
-                    loader.style.display = 'none';
-                    showMessage('Request timeout. Server is taking too long to respond.', 'error');
-                    displayNoResults();
-                };
-                
-                xhr.send();
-            }
-            
-            // Function to display results
-            function displayResults(players) {
-                resultsContainer.innerHTML = '';
-                resultCount.textContent = `${players.length} player(s) found`;
-                
-                players.forEach(player => {
-                    const playerCard = document.createElement('div');
-                    playerCard.className = 'player-card';
-                    
-                    // Format last login date if available
-                    let lastLogin = 'Unknown';
-                    if (player.lastLogin) {
-                        const loginDate = new Date(player.lastLogin * 1000);
-                        lastLogin = loginDate.toLocaleDateString();
-                    }
-                    
-                    playerCard.innerHTML = `
-                        <h3 class="player-name">${escapeHtml(player.nickname)}</h3>
-                        <div class="player-info">
-                            <span class="info-label">Account ID:</span>
-                            <span class="info-value">${player.accountId}</span>
-                        </div>
-                        <div class="player-info">
-                            <span class="info-label">Region:</span>
-                            <span class="info-value">${player.region}</span>
-                        </div>
-                        <div class="player-info">
-                            <span class="info-label">Level:</span>
-                            <span class="info-value">${player.level}</span>
-                        </div>
-                        <div class="player-info">
-                            <span class="info-label">Last Login:</span>
-                            <span class="info-value">${lastLogin}</span>
-                        </div>
-                    `;
-                    
-                    resultsContainer.appendChild(playerCard);
-                });
-            }
-            
-            // Function to display no results
-            function displayNoResults() {
-                resultsContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>No players found. Try a different nickname or region.</p>
-                    </div>
-                `;
-                resultCount.textContent = '0 players found';
-            }
-            
-            // Function to show messages
-            function showMessage(text, type) {
-                messageDiv.textContent = text;
-                messageDiv.className = `message ${type}`;
-                messageDiv.style.display = 'block';
-                
-                // Auto-hide success messages after 5 seconds
-                if (type === 'success') {
-                    setTimeout(() => {
-                        messageDiv.style.display = 'none';
-                    }, 5000);
-                }
-            }
-            
-            // Function to escape HTML characters
-            function escapeHtml(unsafe) {
-                if (!unsafe) return '';
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
-            
-            // Auto-search with example when page loads
-            setTimeout(() => {
-                searchBtn.click();
-            }, 500);
-        });
-    </script>
+    <footer>
+        <div class="container">
+            <p>© 2023 Ultimate Telegram Music Bot | All rights reserved</p>
+            <p>This is a demo page for educational purposes only</p>
+        </div>
+    </footer>
 </body>
 </html>
