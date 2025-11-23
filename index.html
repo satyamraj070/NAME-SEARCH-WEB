@@ -2,72 +2,427 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mast Bubble Shooter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Mast Cricket Game</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
     <style>
-        body { margin: 0; padding: 0; background: #222; }
-        canvas { display: block; margin: auto; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+        canvas { 
+            display: block; 
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
 <script>
+// ==================== GAME CONFIG ====================
 const config = {
     type: Phaser.AUTO,
-    width: 400,
+    width: 800,
     height: 600,
-    backgroundColor: '#1a1a2e',
-    physics: { default: 'arcade' },
+    backgroundColor: '#2d5016',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
     scene: {
-        preload, create, update
+        preload: preload,
+        create: create,
+        update: update
     }
 };
 
-let bubbles = [];
+const game = new Phaser.Game(config);
+
+// ==================== GAME VARIABLES ====================
 let player;
+let ball;
+let bowler;
 let cursors;
+let score = 0;
+let wickets = 0;
+let ballsPlayed = 0;
+let currentOver = 0;
+let ballsInOver = 0;
+let totalOvers = 5;
+let target = 50;
+let level = 1;
+let ballSpeed = 200;
+let gameActive = false;
+let gameStarted = false;
+
+// UI Elements
+let scoreText;
+let wicketsText;
+let oversText;
+let levelText;
+let targetText;
+let messageText;
+let startButton;
+
+// Graphics
+let pitch;
+let stumps;
+let boundary;
 
 function preload() {
-    this.load.image('bubble', 'https://cdn.pixabay.com/photo/2016/10/20/18/35/soap-bubble-1759627_1280.png');
-    this.load.image('player', 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg');
+    // Agar images available hain toh load karo, warna shapes se kaam chalayenge
+    this.load.image('pitch', 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzJkNTAxNiIvPjwvc3ZnPg==');
 }
 
 function create() {
-    this.add.text(20, 20, 'Mast Bubble Shooter!', { font: '22px Arial', fill: '#fff' });
-
-    player = this.physics.add.sprite(200, 550, 'player').setScale(0.2);
+    // ==================== PITCH SETUP ====================
+    pitch = this.add.rectangle(400, 300, 800, 600, 0x2d5016);
+    
+    // Cricket pitch rectangle (actual playing area)
+    let pitchStrip = this.add.rectangle(400, 300, 120, 500, 0x8b7355);
+    
+    // Creases
+    this.add.rectangle(400, 150, 120, 4, 0xffffff); // Bowling crease
+    this.add.rectangle(400, 450, 120, 4, 0xffffff); // Batting crease
+    
+    // Boundary circle
+    let boundary = this.add.circle(400, 300, 280, 0x3d6b1f, 0);
+    boundary.setStrokeStyle(3, 0xffffff);
+    
+    // ==================== STUMPS ====================
+    drawStumps(this, 400, 460);
+    
+    // ==================== BATSMAN ====================
+    player = this.add.rectangle(400, 420, 20, 60, 0x0066cc);
+    this.physics.add.existing(player);
+    player.body.setCollideWorldBounds(true);
+    
+    // Bat (child of player)
+    let bat = this.add.rectangle(410, 420, 40, 8, 0x8B4513);
+    bat.setDepth(1);
+    
+    // ==================== BOWLER ====================
+    bowler = this.add.rectangle(400, 100, 20, 60, 0xff3333);
+    
+    // ==================== BALL ====================
+    ball = this.physics.add.sprite(400, 120, null);
+    ball.setCircle(6);
+    ball.body.setCircle(6);
+    ball.setDisplaySize(12, 12);
+    let ballGraphics = this.add.graphics();
+    ballGraphics.fillStyle(0xff0000, 1);
+    ballGraphics.fillCircle(0, 0, 6);
+    ballGraphics.generateTexture('ballTexture', 12, 12);
+    ballGraphics.destroy();
+    ball.setTexture('ballTexture');
+    ball.setVisible(false);
+    
+    // ==================== CONTROLS ====================
     cursors = this.input.keyboard.createCursorKeys();
-
-    // Bubble group
-    for (let i = 0; i < 8; i++) {
-        let bubble = this.physics.add.sprite(
-            50 + i * 40,
-            Phaser.Math.Between(50, 200),
-            'bubble'
-        ).setScale(0.08);
-        bubble.setBounce(1);
-        bubble.setVelocity(Phaser.Math.Between(-50, 50), Phaser.Math.Between(50, 100));
-        bubbles.push(bubble);
-        this.physics.add.collider(bubble, player, hitBubble, null, this);
-    }
+    
+    // Touch/Click Controls
+    this.input.on('pointerdown', (pointer) => {
+        if (!gameStarted) return;
+        if (gameActive && ball.body.velocity.y > 0) {
+            playShot(pointer.x);
+        }
+    });
+    
+    // Spacebar to play shot
+    this.input.keyboard.on('keydown-SPACE', () => {
+        if (gameActive && ball.body.velocity.y > 0) {
+            playShot(player.x);
+        }
+    });
+    
+    // ==================== UI SETUP ====================
+    scoreText = this.add.text(20, 20, 'Score: 0/0', { 
+        fontSize: '24px', 
+        fill: '#fff',
+        fontStyle: 'bold',
+        backgroundColor: '#000',
+        padding: { x: 10, y: 5 }
+    });
+    
+    oversText = this.add.text(20, 55, 'Overs: 0.0/' + totalOvers, { 
+        fontSize: '20px', 
+        fill: '#fff',
+        backgroundColor: '#000',
+        padding: { x: 10, y: 5 }
+    });
+    
+    levelText = this.add.text(650, 20, 'Level: 1', { 
+        fontSize: '20px', 
+        fill: '#ffff00',
+        fontStyle: 'bold',
+        backgroundColor: '#000',
+        padding: { x: 10, y: 5 }
+    });
+    
+    targetText = this.add.text(650, 55, 'Target: ' + target, { 
+        fontSize: '18px', 
+        fill: '#00ff00',
+        backgroundColor: '#000',
+        padding: { x: 10, y: 5 }
+    });
+    
+    messageText = this.add.text(400, 250, '', { 
+        fontSize: '28px', 
+        fill: '#ffff00',
+        fontStyle: 'bold',
+        backgroundColor: '#000',
+        padding: { x: 15, y: 10 }
+    });
+    messageText.setOrigin(0.5);
+    messageText.setVisible(false);
+    
+    // ==================== START BUTTON ====================
+    startButton = this.add.text(400, 300, 'START MATCH', {
+        fontSize: '32px',
+        fill: '#fff',
+        backgroundColor: '#009900',
+        padding: { x: 30, y: 15 }
+    });
+    startButton.setOrigin(0.5);
+    startButton.setInteractive();
+    startButton.on('pointerdown', () => {
+        startButton.setVisible(false);
+        gameStarted = true;
+        bowlBall(this);
+    });
+    
+    // Add welcome message
+    this.add.text(400, 220, 'FULL MAST CRICKET!', {
+        fontSize: '36px',
+        fill: '#ffff00',
+        fontStyle: 'bold'
+    }).setOrigin(0.5);
 }
 
 function update() {
-    if (cursors.left.isDown) {
-        player.x -= 5;
+    if (!gameStarted) return;
+    
+    // Move batsman with arrow keys
+    if (cursors.left.isDown && player.x > 340) {
+        player.x -= 3;
+    } else if (cursors.right.isDown && player.x < 460) {
+        player.x += 3;
     }
-    if (cursors.right.isDown) {
-        player.x += 5;
+    
+    // Check if ball reached batsman
+    if (gameActive && ball.y >= 410 && ball.y <= 430) {
+        let distance = Math.abs(ball.x - player.x);
+        if (distance > 25) {
+            // WICKET!
+            handleWicket(this);
+        }
     }
-    // Touch controls (mobile)
-    this.input.on('pointerdown', function (pointer) {
-        player.x = pointer.x;
+    
+    // Check if ball crossed boundary
+    if (ball.y > 580) {
+        if (gameActive) {
+            // Ball missed - dot ball
+            showMessage(this, 'Dot Ball!', 0xffffff);
+            nextBall(this);
+        }
+    }
+}
+
+// ==================== GAME FUNCTIONS ====================
+function bowlBall(scene) {
+    gameActive = true;
+    ball.setVisible(true);
+    ball.setPosition(400 + Phaser.Math.Between(-30, 30), 120);
+    
+    // Variable delivery based on level
+    let xVariation = Phaser.Math.Between(-50, 50) * (level * 0.5);
+    let speedVariation = ballSpeed + (level * 20);
+    
+    ball.setVelocity(xVariation, speedVariation);
+    ball.setBounce(0.3);
+    ball.setCollideWorldBounds(true);
+}
+
+function playShot(clickX) {
+    let distance = Math.abs(ball.x - player.x);
+    
+    if (distance < 30) {
+        // GOOD SHOT!
+        let runs = 0;
+        let shotPower = Phaser.Math.Between(1, 100);
+        
+        if (shotPower > 85) {
+            runs = 6;
+            showMessage(this.scene.scene, 'SIX! 🔥', 0x00ff00);
+        } else if (shotPower > 70) {
+            runs = 4;
+            showMessage(this.scene.scene, 'FOUR! 💥', 0x00ff00);
+        } else if (shotPower > 40) {
+            runs = Phaser.Math.Between(1, 3);
+            showMessage(this.scene.scene, runs + ' Run' + (runs > 1 ? 's' : ''), 0xffffff);
+        } else {
+            runs = 0;
+            showMessage(this.scene.scene, 'Defended', 0xaaaaaa);
+        }
+        
+        score += runs;
+        updateScore();
+        
+        // Ball flies away
+        ball.setVelocity(Phaser.Math.Between(-200, 200), -300);
+        
+        setTimeout(() => {
+            nextBall(this.scene.scene);
+        }, 1500);
+        
+        gameActive = false;
+    }
+}
+
+function handleWicket(scene) {
+    wickets++;
+    gameActive = false;
+    
+    showMessage(scene, 'WICKET! 🏏', 0xff0000);
+    
+    ball.setVelocity(0, 0);
+    ball.setVisible(false);
+    
+    updateScore();
+    
+    if (wickets >= 10) {
+        gameOver(scene, false);
+    } else {
+        setTimeout(() => {
+            nextBall(scene);
+        }, 2000);
+    }
+}
+
+function nextBall(scene) {
+    ballsPlayed++;
+    ballsInOver++;
+    
+    if (ballsInOver >= 6) {
+        currentOver++;
+        ballsInOver = 0;
+    }
+    
+    updateOvers();
+    
+    // Check if overs completed
+    if (currentOver >= totalOvers) {
+        if (score >= target) {
+            gameOver(scene, true);
+        } else {
+            gameOver(scene, false);
+        }
+        return;
+    }
+    
+    // Check if target achieved
+    if (score >= target) {
+        levelUp(scene);
+        return;
+    }
+    
+    ball.setVisible(false);
+    ball.setVelocity(0, 0);
+    
+    setTimeout(() => {
+        bowlBall(scene);
+    }, 1500);
+}
+
+function levelUp(scene) {
+    level++;
+    ballSpeed += 30;
+    target = score + (level * 25);
+    totalOvers += 2;
+    currentOver = 0;
+    ballsInOver = 0;
+    wickets = 0;
+    
+    levelText.setText('Level: ' + level);
+    targetText.setText('Target: ' + target);
+    
+    showMessage(scene, 'LEVEL UP! 🎉
+New Target: ' + target, 0xffff00);
+    
+    setTimeout(() => {
+        messageText.setVisible(false);
+        bowlBall(scene);
+    }, 3000);
+}
+
+function gameOver(scene, won) {
+    gameActive = false;
+    gameStarted = false;
+    ball.setVisible(false);
+    
+    if (won) {
+        showMessage(scene, 'YOU WON! 🏆
+Final Score: ' + score + '/' + wickets + '
+
+Click to Restart', 0x00ff00);
+    } else {
+        showMessage(scene, 'GAME OVER! 😢
+Score: ' + score + '/' + wickets + '
+
+Click to Restart', 0xff0000);
+    }
+    
+    scene.input.once('pointerdown', () => {
+        scene.scene.restart();
+        resetGame();
     });
 }
 
-function hitBubble(player, bubble) {
-    bubble.destroy();
+function resetGame() {
+    score = 0;
+    wickets = 0;
+    ballsPlayed = 0;
+    currentOver = 0;
+    ballsInOver = 0;
+    level = 1;
+    ballSpeed = 200;
+    target = 50;
+    totalOvers = 5;
 }
-new Phaser.Game(config);
+
+function updateScore() {
+    scoreText.setText('Score: ' + score + '/' + wickets);
+}
+
+function updateOvers() {
+    oversText.setText('Overs: ' + currentOver + '.' + ballsInOver + '/' + totalOvers);
+}
+
+function showMessage(scene, text, color) {
+    messageText.setText(text);
+    messageText.setColor('#' + color.toString(16).padStart(6, '0'));
+    messageText.setVisible(true);
+    
+    setTimeout(() => {
+        messageText.setVisible(false);
+    }, 1500);
+}
+
+function drawStumps(scene, x, y) {
+    // 3 stumps
+    scene.add.rectangle(x - 15, y, 4, 30, 0xffff00);
+    scene.add.rectangle(x, y, 4, 30, 0xffff00);
+    scene.add.rectangle(x + 15, y, 4, 30, 0xffff00);
+    // Bails
+    scene.add.rectangle(x - 7, y - 15, 10, 2, 0xffff00);
+    scene.add.rectangle(x + 7, y - 15, 10, 2, 0xffff00);
+}
 </script>
 </body>
 </html>
