@@ -2,447 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Telegram Music Bot</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Mast Bubble Shooter</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            line-height: 1.6;
-            padding-bottom: 50px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        header {
-            text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
-            margin-bottom: 30px;
-            border-bottom: 3px solid #e94560;
-        }
-        
-        header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: #e94560;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        header p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            color: #b8b8d1;
-        }
-        
-        .logo {
-            font-size: 50px;
-            margin-bottom: 20px;
-            color: #e94560;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            color: #e94560;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-        
-        .feature-card p {
-            color: #b8b8d1;
-        }
-        
-        .commands {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 40px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .commands h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #e94560;
-            font-size: 2rem;
-        }
-        
-        .command-category {
-            margin-bottom: 30px;
-        }
-        
-        .command-category h3 {
-            color: #0fccce;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #0fccce;
-        }
-        
-        .command-item {
-            display: flex;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-        }
-        
-        .command {
-            flex: 1;
-            font-weight: bold;
-            color: #e94560;
-        }
-        
-        .description {
-            flex: 2;
-            color: #b8b8d1;
-        }
-        
-        .setup {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 40px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .setup h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #e94560;
-            font-size: 2rem;
-        }
-        
-        .steps {
-            display: grid;
-            gap: 20px;
-        }
-        
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        
-        .step-number {
-            background: #e94560;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        
-        .step-content h3 {
-            margin-bottom: 8px;
-            color: #0fccce;
-        }
-        
-        .step-content p {
-            color: #b8b8d1;
-        }
-        
-        .cta {
-            text-align: center;
-            margin-top: 40px;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: #e94560;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
-        }
-        
-        .btn:hover {
-            background: #ff667d;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #b8b8d1;
-        }
-        
-        @media (max-width: 768px) {
-            .features {
-                grid-template-columns: 1fr;
-            }
-            
-            .command-item {
-                flex-direction: column;
-            }
-            
-            .command, .description {
-                flex: auto;
-            }
-            
-            .command {
-                margin-bottom: 8px;
-            }
-        }
+        body { margin: 0; padding: 0; background: #222; }
+        canvas { display: block; margin: auto; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-music"></i>
-            </div>
-            <h1>Ultimate Telegram Music Bot</h1>
-            <p>A feature-rich music bot for Telegram with YouTube, Spotify, and SoundCloud support, playlist management, and much more!</p>
-        </div>
-    </header>
+<script>
+const config = {
+    type: Phaser.AUTO,
+    width: 400,
+    height: 600,
+    backgroundColor: '#1a1a2e',
+    physics: { default: 'arcade' },
+    scene: {
+        preload, create, update
+    }
+};
 
-    <div class="container">
-        <section class="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <h3>High Quality Audio</h3>
-                <p>Play music from YouTube, Spotify, SoundCloud and more with the best available audio quality.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-list"></i>
-                </div>
-                <h3>Playlist Support</h3>
-                <p>Create and manage your playlists, save your favorite tracks, and share them with friends.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h3>Advanced Search</h3>
-                <p>Search for songs, artists, or albums directly from your chat with intuitive search commands.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-sliders-h"></i>
-                </div>
-                <h3>Audio Controls</h3>
-                <p>Adjust volume, bass, treble, and apply audio effects directly from the bot's controls.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>Multi-Language</h3>
-                <p>Supports multiple languages including Hindi, English, Spanish, and many more.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-gem"></i>
-                </div>
-                <h3>Premium Features</h3>
-                <p>Unlock exclusive features with premium version including higher quality audio and no ads.</p>
-            </div>
-        </section>
+let bubbles = [];
+let player;
+let cursors;
 
-        <section class="commands">
-            <h2>Bot Commands</h2>
-            
-            <div class="command-category">
-                <h3>Music Playback</h3>
-                
-                <div class="command-item">
-                    <div class="command">/play [song]</div>
-                    <div class="description">Play a song from YouTube, Spotify, or SoundCloud</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/playlist</div>
-                    <div class="description">Play entire playlist from a link</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/radio</div>
-                    <div class="description">Start a live radio stream</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/search [query]</div>
-                    <div class="description">Search for a song and select from results</div>
-                </div>
-            </div>
-            
-            <div class="command-category">
-                <h3>Playback Controls</h3>
-                
-                <div class="command-item">
-                    <div class="command">/pause</div>
-                    <div class="description">Pause the current playback</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/resume</div>
-                    <div class="description">Resume the paused playback</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/skip</div>
-                    <div class="description">Skip to the next song in queue</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/stop</div>
-                    <div class="description">Stop the playback and clear the queue</div>
-                </div>
-            </div>
-            
-            <div class="command-category">
-                <h3>Queue Management</h3>
-                
-                <div class="command-item">
-                    <div class="command">/queue</div>
-                    <div class="description">Show the current music queue</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/shuffle</div>
-                    <div class="description">Shuffle the current queue</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/move [position]</div>
-                    <div class="description">Move a song to a different position in queue</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/remove [position]</div>
-                    <div class="description">Remove a song from the queue</div>
-                </div>
-            </div>
-            
-            <div class="command-category">
-                <h3>Additional Features</h3>
-                
-                <div class="command-item">
-                    <div class="command">/lyrics [song]</div>
-                    <div class="description">Get lyrics for the current song or specified song</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/video [song]</div>
-                    <div class="description">Get the video for the current song</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/effects</div>
-                    <div class="description">Apply audio effects like bass boost, echo, etc.</div>
-                </div>
-                
-                <div class="command-item">
-                    <div class="command">/settings</div>
-                    <div class="description">Change bot settings for your chat</div>
-                </div>
-            </div>
-        </section>
+function preload() {
+    this.load.image('bubble', 'https://cdn.pixabay.com/photo/2016/10/20/18/35/soap-bubble-1759627_1280.png');
+    this.load.image('player', 'https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg');
+}
 
-        <section class="setup">
-            <h2>How to Setup</h2>
-            
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Find the Bot</h3>
-                        <p>Search for @UltimateMusicBot on Telegram or click the start button below.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Start the Bot</h3>
-                        <p>Open the chat with the bot and click the "Start" button to initialize it.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Add to Group</h3>
-                        <p>Add the bot to your group and give it necessary admin permissions.</p>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>Start Playing</h3>
-                        <p>Use commands like /play to start enjoying music in your group voice chat.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="cta">
-                <a href="https://t.me/UltimateMusicBot" class="btn">Start Using Bot</a>
-            </div>
-        </section>
-    </div>
+function create() {
+    this.add.text(20, 20, 'Mast Bubble Shooter!', { font: '22px Arial', fill: '#fff' });
 
-    <footer>
-        <div class="container">
-            <p>© 2023 Ultimate Telegram Music Bot | All rights reserved</p>
-            <p>This is a demo page for educational purposes only</p>
-        </div>
-    </footer>
+    player = this.physics.add.sprite(200, 550, 'player').setScale(0.2);
+    cursors = this.input.keyboard.createCursorKeys();
+
+    // Bubble group
+    for (let i = 0; i < 8; i++) {
+        let bubble = this.physics.add.sprite(
+            50 + i * 40,
+            Phaser.Math.Between(50, 200),
+            'bubble'
+        ).setScale(0.08);
+        bubble.setBounce(1);
+        bubble.setVelocity(Phaser.Math.Between(-50, 50), Phaser.Math.Between(50, 100));
+        bubbles.push(bubble);
+        this.physics.add.collider(bubble, player, hitBubble, null, this);
+    }
+}
+
+function update() {
+    if (cursors.left.isDown) {
+        player.x -= 5;
+    }
+    if (cursors.right.isDown) {
+        player.x += 5;
+    }
+    // Touch controls (mobile)
+    this.input.on('pointerdown', function (pointer) {
+        player.x = pointer.x;
+    });
+}
+
+function hitBubble(player, bubble) {
+    bubble.destroy();
+}
+new Phaser.Game(config);
+</script>
 </body>
 </html>
