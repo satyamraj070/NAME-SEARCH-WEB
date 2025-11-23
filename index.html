@@ -3,426 +3,614 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Mast Cricket Game</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
+    <title>Mast Cricket Game - Full Advanced</title>
     <style>
-        body { 
-            margin: 0; 
-            padding: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Arial', sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        canvas { 
-            display: block; 
-            margin: 20px auto;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Arial Black', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #gameContainer {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            border: 5px solid #2a5298;
         }
     </style>
 </head>
 <body>
-<script>
-// ==================== GAME CONFIG ====================
-const config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    backgroundColor: '#2d5016',
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 0 },
-            debug: false
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
-};
+    <div id="gameContainer">
+        <canvas id="cricketCanvas" width="800" height="600"></canvas>
+    </div>
 
-const game = new Phaser.Game(config);
-
-// ==================== GAME VARIABLES ====================
-let player;
-let ball;
-let bowler;
-let cursors;
-let score = 0;
-let wickets = 0;
-let ballsPlayed = 0;
-let currentOver = 0;
-let ballsInOver = 0;
-let totalOvers = 5;
-let target = 50;
-let level = 1;
-let ballSpeed = 200;
-let gameActive = false;
-let gameStarted = false;
-
-// UI Elements
-let scoreText;
-let wicketsText;
-let oversText;
-let levelText;
-let targetText;
-let messageText;
-let startButton;
-
-// Graphics
-let pitch;
-let stumps;
-let boundary;
-
-function preload() {
-    // Agar images available hain toh load karo, warna shapes se kaam chalayenge
-    this.load.image('pitch', 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzJkNTAxNiIvPjwvc3ZnPg==');
-}
-
-function create() {
-    // ==================== PITCH SETUP ====================
-    pitch = this.add.rectangle(400, 300, 800, 600, 0x2d5016);
-    
-    // Cricket pitch rectangle (actual playing area)
-    let pitchStrip = this.add.rectangle(400, 300, 120, 500, 0x8b7355);
-    
-    // Creases
-    this.add.rectangle(400, 150, 120, 4, 0xffffff); // Bowling crease
-    this.add.rectangle(400, 450, 120, 4, 0xffffff); // Batting crease
-    
-    // Boundary circle
-    let boundary = this.add.circle(400, 300, 280, 0x3d6b1f, 0);
-    boundary.setStrokeStyle(3, 0xffffff);
-    
-    // ==================== STUMPS ====================
-    drawStumps(this, 400, 460);
-    
-    // ==================== BATSMAN ====================
-    player = this.add.rectangle(400, 420, 20, 60, 0x0066cc);
-    this.physics.add.existing(player);
-    player.body.setCollideWorldBounds(true);
-    
-    // Bat (child of player)
-    let bat = this.add.rectangle(410, 420, 40, 8, 0x8B4513);
-    bat.setDepth(1);
-    
-    // ==================== BOWLER ====================
-    bowler = this.add.rectangle(400, 100, 20, 60, 0xff3333);
-    
-    // ==================== BALL ====================
-    ball = this.physics.add.sprite(400, 120, null);
-    ball.setCircle(6);
-    ball.body.setCircle(6);
-    ball.setDisplaySize(12, 12);
-    let ballGraphics = this.add.graphics();
-    ballGraphics.fillStyle(0xff0000, 1);
-    ballGraphics.fillCircle(0, 0, 6);
-    ballGraphics.generateTexture('ballTexture', 12, 12);
-    ballGraphics.destroy();
-    ball.setTexture('ballTexture');
-    ball.setVisible(false);
-    
-    // ==================== CONTROLS ====================
-    cursors = this.input.keyboard.createCursorKeys();
-    
-    // Touch/Click Controls
-    this.input.on('pointerdown', (pointer) => {
-        if (!gameStarted) return;
-        if (gameActive && ball.body.velocity.y > 0) {
-            playShot(pointer.x);
-        }
-    });
-    
-    // Spacebar to play shot
-    this.input.keyboard.on('keydown-SPACE', () => {
-        if (gameActive && ball.body.velocity.y > 0) {
-            playShot(player.x);
-        }
-    });
-    
-    // ==================== UI SETUP ====================
-    scoreText = this.add.text(20, 20, 'Score: 0/0', { 
-        fontSize: '24px', 
-        fill: '#fff',
-        fontStyle: 'bold',
-        backgroundColor: '#000',
-        padding: { x: 10, y: 5 }
-    });
-    
-    oversText = this.add.text(20, 55, 'Overs: 0.0/' + totalOvers, { 
-        fontSize: '20px', 
-        fill: '#fff',
-        backgroundColor: '#000',
-        padding: { x: 10, y: 5 }
-    });
-    
-    levelText = this.add.text(650, 20, 'Level: 1', { 
-        fontSize: '20px', 
-        fill: '#ffff00',
-        fontStyle: 'bold',
-        backgroundColor: '#000',
-        padding: { x: 10, y: 5 }
-    });
-    
-    targetText = this.add.text(650, 55, 'Target: ' + target, { 
-        fontSize: '18px', 
-        fill: '#00ff00',
-        backgroundColor: '#000',
-        padding: { x: 10, y: 5 }
-    });
-    
-    messageText = this.add.text(400, 250, '', { 
-        fontSize: '28px', 
-        fill: '#ffff00',
-        fontStyle: 'bold',
-        backgroundColor: '#000',
-        padding: { x: 15, y: 10 }
-    });
-    messageText.setOrigin(0.5);
-    messageText.setVisible(false);
-    
-    // ==================== START BUTTON ====================
-    startButton = this.add.text(400, 300, 'START MATCH', {
-        fontSize: '32px',
-        fill: '#fff',
-        backgroundColor: '#009900',
-        padding: { x: 30, y: 15 }
-    });
-    startButton.setOrigin(0.5);
-    startButton.setInteractive();
-    startButton.on('pointerdown', () => {
-        startButton.setVisible(false);
-        gameStarted = true;
-        bowlBall(this);
-    });
-    
-    // Add welcome message
-    this.add.text(400, 220, 'FULL MAST CRICKET!', {
-        fontSize: '36px',
-        fill: '#ffff00',
-        fontStyle: 'bold'
-    }).setOrigin(0.5);
-}
-
-function update() {
-    if (!gameStarted) return;
-    
-    // Move batsman with arrow keys
-    if (cursors.left.isDown && player.x > 340) {
-        player.x -= 3;
-    } else if (cursors.right.isDown && player.x < 460) {
-        player.x += 3;
-    }
-    
-    // Check if ball reached batsman
-    if (gameActive && ball.y >= 410 && ball.y <= 430) {
-        let distance = Math.abs(ball.x - player.x);
-        if (distance > 25) {
-            // WICKET!
-            handleWicket(this);
-        }
-    }
-    
-    // Check if ball crossed boundary
-    if (ball.y > 580) {
-        if (gameActive) {
-            // Ball missed - dot ball
-            showMessage(this, 'Dot Ball!', 0xffffff);
-            nextBall(this);
-        }
-    }
-}
-
-// ==================== GAME FUNCTIONS ====================
-function bowlBall(scene) {
-    gameActive = true;
-    ball.setVisible(true);
-    ball.setPosition(400 + Phaser.Math.Between(-30, 30), 120);
-    
-    // Variable delivery based on level
-    let xVariation = Phaser.Math.Between(-50, 50) * (level * 0.5);
-    let speedVariation = ballSpeed + (level * 20);
-    
-    ball.setVelocity(xVariation, speedVariation);
-    ball.setBounce(0.3);
-    ball.setCollideWorldBounds(true);
-}
-
-function playShot(clickX) {
-    let distance = Math.abs(ball.x - player.x);
-    
-    if (distance < 30) {
-        // GOOD SHOT!
-        let runs = 0;
-        let shotPower = Phaser.Math.Between(1, 100);
+    <script>
+        // ==================== CANVAS SETUP ====================
+        const canvas = document.getElementById('cricketCanvas');
+        const ctx = canvas.getContext('2d');
         
-        if (shotPower > 85) {
-            runs = 6;
-            showMessage(this.scene.scene, 'SIX! 🔥', 0x00ff00);
-        } else if (shotPower > 70) {
-            runs = 4;
-            showMessage(this.scene.scene, 'FOUR! 💥', 0x00ff00);
-        } else if (shotPower > 40) {
-            runs = Phaser.Math.Between(1, 3);
-            showMessage(this.scene.scene, runs + ' Run' + (runs > 1 ? 's' : ''), 0xffffff);
-        } else {
-            runs = 0;
-            showMessage(this.scene.scene, 'Defended', 0xaaaaaa);
+        // ==================== GAME STATE ====================
+        let gameState = {
+            score: 0,
+            wickets: 0,
+            balls: 0,
+            overs: 0,
+            ballsThisOver: 0,
+            totalOvers: 5,
+            target: 50,
+            level: 1,
+            gameActive: false,
+            gameStarted: false,
+            ballInMotion: false
+        };
+        
+        // ==================== GAME OBJECTS ====================
+        let batsman = {
+            x: 400,
+            y: 480,
+            width: 30,
+            height: 80,
+            batAngle: 0,
+            color: '#0066FF'
+        };
+        
+        let ball = {
+            x: 400,
+            y: 100,
+            radius: 8,
+            speedX: 0,
+            speedY: 0,
+            color: '#FF0000',
+            visible: false
+        };
+        
+        let bowler = {
+            x: 400,
+            y: 80,
+            width: 30,
+            height: 60,
+            color: '#FF3333'
+        };
+        
+        let stumps = {
+            x: 400,
+            y: 550,
+            width: 40,
+            height: 50
+        };
+        
+        // ==================== INPUT HANDLING ====================
+        let keys = {};
+        let mouseX = 0;
+        let mouseClicked = false;
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === ' ' && gameState.ballInMotion) {
+                playShot();
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+        });
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            
+            if (!gameState.gameStarted) {
+                // Check if clicked on start button
+                if (clickX > 250 && clickX < 550 && clickY > 280 && clickY < 350) {
+                    startGame();
+                }
+            } else if (gameState.ballInMotion) {
+                playShot();
+            }
+        });
+        
+        // Touch support for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+            
+            if (!gameState.gameStarted) {
+                if (touchX > 250 && touchX < 550 && touchY > 280 && touchY < 350) {
+                    startGame();
+                }
+            } else if (gameState.ballInMotion) {
+                playShot();
+            }
+        });
+        
+        // ==================== DRAWING FUNCTIONS ====================
+        function drawPitch() {
+            // Ground
+            ctx.fillStyle = '#2d8b3d';
+            ctx.fillRect(0, 0, 800, 600);
+            
+            // Pitch strip
+            ctx.fillStyle = '#b8926a';
+            ctx.fillRect(350, 50, 100, 500);
+            
+            // Creases
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(330, 120);
+            ctx.lineTo(470, 120);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(330, 530);
+            ctx.lineTo(470, 530);
+            ctx.stroke();
+            
+            // Boundary circle
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(400, 300, 280, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Decorative lines on pitch
+            for (let i = 0; i < 10; i++) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(360, 100 + i * 40);
+                ctx.lineTo(440, 100 + i * 40);
+                ctx.stroke();
+            }
         }
         
-        score += runs;
-        updateScore();
-        
-        // Ball flies away
-        ball.setVelocity(Phaser.Math.Between(-200, 200), -300);
-        
-        setTimeout(() => {
-            nextBall(this.scene.scene);
-        }, 1500);
-        
-        gameActive = false;
-    }
-}
-
-function handleWicket(scene) {
-    wickets++;
-    gameActive = false;
-    
-    showMessage(scene, 'WICKET! 🏏', 0xff0000);
-    
-    ball.setVelocity(0, 0);
-    ball.setVisible(false);
-    
-    updateScore();
-    
-    if (wickets >= 10) {
-        gameOver(scene, false);
-    } else {
-        setTimeout(() => {
-            nextBall(scene);
-        }, 2000);
-    }
-}
-
-function nextBall(scene) {
-    ballsPlayed++;
-    ballsInOver++;
-    
-    if (ballsInOver >= 6) {
-        currentOver++;
-        ballsInOver = 0;
-    }
-    
-    updateOvers();
-    
-    // Check if overs completed
-    if (currentOver >= totalOvers) {
-        if (score >= target) {
-            gameOver(scene, true);
-        } else {
-            gameOver(scene, false);
+        function drawStumps() {
+            // Stumps
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(stumps.x - 15, stumps.y, 6, 40);
+            ctx.fillRect(stumps.x - 3, stumps.y, 6, 40);
+            ctx.fillRect(stumps.x + 9, stumps.y, 6, 40);
+            
+            // Bails
+            ctx.fillRect(stumps.x - 12, stumps.y - 3, 12, 3);
+            ctx.fillRect(stumps.x + 3, stumps.y - 3, 12, 3);
         }
-        return;
-    }
-    
-    // Check if target achieved
-    if (score >= target) {
-        levelUp(scene);
-        return;
-    }
-    
-    ball.setVisible(false);
-    ball.setVelocity(0, 0);
-    
-    setTimeout(() => {
-        bowlBall(scene);
-    }, 1500);
-}
-
-function levelUp(scene) {
-    level++;
-    ballSpeed += 30;
-    target = score + (level * 25);
-    totalOvers += 2;
-    currentOver = 0;
-    ballsInOver = 0;
-    wickets = 0;
-    
-    levelText.setText('Level: ' + level);
-    targetText.setText('Target: ' + target);
-    
-    showMessage(scene, 'LEVEL UP! 🎉
-New Target: ' + target, 0xffff00);
-    
-    setTimeout(() => {
-        messageText.setVisible(false);
-        bowlBall(scene);
-    }, 3000);
-}
-
-function gameOver(scene, won) {
-    gameActive = false;
-    gameStarted = false;
-    ball.setVisible(false);
-    
-    if (won) {
-        showMessage(scene, 'YOU WON! 🏆
-Final Score: ' + score + '/' + wickets + '
-
-Click to Restart', 0x00ff00);
-    } else {
-        showMessage(scene, 'GAME OVER! 😢
-Score: ' + score + '/' + wickets + '
-
-Click to Restart', 0xff0000);
-    }
-    
-    scene.input.once('pointerdown', () => {
-        scene.scene.restart();
-        resetGame();
-    });
-}
-
-function resetGame() {
-    score = 0;
-    wickets = 0;
-    ballsPlayed = 0;
-    currentOver = 0;
-    ballsInOver = 0;
-    level = 1;
-    ballSpeed = 200;
-    target = 50;
-    totalOvers = 5;
-}
-
-function updateScore() {
-    scoreText.setText('Score: ' + score + '/' + wickets);
-}
-
-function updateOvers() {
-    oversText.setText('Overs: ' + currentOver + '.' + ballsInOver + '/' + totalOvers);
-}
-
-function showMessage(scene, text, color) {
-    messageText.setText(text);
-    messageText.setColor('#' + color.toString(16).padStart(6, '0'));
-    messageText.setVisible(true);
-    
-    setTimeout(() => {
-        messageText.setVisible(false);
-    }, 1500);
-}
-
-function drawStumps(scene, x, y) {
-    // 3 stumps
-    scene.add.rectangle(x - 15, y, 4, 30, 0xffff00);
-    scene.add.rectangle(x, y, 4, 30, 0xffff00);
-    scene.add.rectangle(x + 15, y, 4, 30, 0xffff00);
-    // Bails
-    scene.add.rectangle(x - 7, y - 15, 10, 2, 0xffff00);
-    scene.add.rectangle(x + 7, y - 15, 10, 2, 0xffff00);
-}
-</script>
+        
+        function drawBatsman() {
+            // Body
+            ctx.fillStyle = batsman.color;
+            ctx.fillRect(batsman.x - batsman.width/2, batsman.y - batsman.height, batsman.width, batsman.height);
+            
+            // Head
+            ctx.beginPath();
+            ctx.arc(batsman.x, batsman.y - batsman.height - 10, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFD8A8';
+            ctx.fill();
+            
+            // Helmet
+            ctx.fillStyle = batsman.color;
+            ctx.beginPath();
+            ctx.arc(batsman.x, batsman.y - batsman.height - 10, 15, Math.PI, Math.PI * 2);
+            ctx.fill();
+            
+            // Bat
+            ctx.save();
+            ctx.translate(batsman.x + 20, batsman.y - 40);
+            ctx.rotate(batsman.batAngle);
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(-5, -40, 10, 80);
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(-6, 30, 12, 10);
+            ctx.restore();
+        }
+        
+        function drawBowler() {
+            // Body
+            ctx.fillStyle = bowler.color;
+            ctx.fillRect(bowler.x - bowler.width/2, bowler.y, bowler.width, bowler.height);
+            
+            // Head
+            ctx.beginPath();
+            ctx.arc(bowler.x, bowler.y - 5, 12, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFD8A8';
+            ctx.fill();
+            
+            // Bowling arm (animated)
+            ctx.strokeStyle = bowler.color;
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(bowler.x, bowler.y + 20);
+            ctx.lineTo(bowler.x - 15, bowler.y - 10);
+            ctx.stroke();
+        }
+        
+        function drawBall() {
+            if (ball.visible) {
+                // Ball shadow
+                ctx.beginPath();
+                ctx.arc(ball.x + 3, ball.y + 3, ball.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fill();
+                
+                // Ball
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+                ctx.fillStyle = ball.color;
+                ctx.fill();
+                
+                // Ball seam
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(ball.x, ball.y, ball.radius/2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+        
+        function drawUI() {
+            // Score panel
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(10, 10, 250, 120);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(`Score: ${gameState.score}/${gameState.wickets}`, 20, 40);
+            
+            ctx.font = '18px Arial';
+            ctx.fillText(`Overs: ${gameState.overs}.${gameState.ballsThisOver}/${gameState.totalOvers}`, 20, 70);
+            ctx.fillText(`Target: ${gameState.target}`, 20, 95);
+            ctx.fillText(`Level: ${gameState.level}`, 20, 120);
+            
+            // Instructions
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(540, 10, 250, 80);
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Controls:', 550, 35);
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('← → or Mouse: Move', 550, 55);
+            ctx.fillText('SPACE/Click: Shot', 550, 75);
+        }
+        
+        function drawStartScreen() {
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, 800, 600);
+            
+            // Title
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 60px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('CRICKET MASTER', 400, 150);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('Full Advanced Edition', 400, 200);
+            
+            // Start button
+            ctx.fillStyle = '#00AA00';
+            ctx.fillRect(250, 280, 300, 70);
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(250, 280, 300, 70);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('START GAME', 400, 330);
+            
+            // Instructions
+            ctx.font = '18px Arial';
+            ctx.fillStyle = '#AAAAAA';
+            ctx.fillText('Score runs and complete levels!', 400, 420);
+            ctx.fillText('Time your shots perfectly to hit boundaries', 400, 450);
+            ctx.fillText('Miss the ball = WICKET!', 400, 480);
+            
+            ctx.textAlign = 'left';
+        }
+        
+        function drawMessage(text, color, size = 36) {
+            ctx.fillStyle = 'rgba(0,0,0,0.8)';
+            ctx.fillRect(200, 250, 400, 100);
+            
+            ctx.fillStyle = color;
+            ctx.font = `bold ${size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 400, 310);
+            ctx.textAlign = 'left';
+        }
+        
+        // ==================== GAME LOGIC ====================
+        function startGame() {
+            gameState.gameStarted = true;
+            setTimeout(() => {
+                bowlBall();
+            }, 500);
+        }
+        
+        function bowlBall() {
+            gameState.ballInMotion = true;
+            ball.visible = true;
+            ball.y = 100;
+            
+            // Variable delivery based on level
+            const variation = (Math.random() - 0.5) * 100 * (gameState.level * 0.5);
+            ball.x = 400 + variation;
+            
+            ball.speedX = variation * 0.02;
+            ball.speedY = 3 + (gameState.level * 0.3);
+        }
+        
+        function playShot() {
+            if (!gameState.ballInMotion) return;
+            
+            const distance = Math.abs(ball.x - batsman.x);
+            const timing = Math.abs(ball.y - (batsman.y - 20));
+            
+            // Bat animation
+            batsman.batAngle = -0.5;
+            setTimeout(() => { batsman.batAngle = 0; }, 200);
+            
+            if (distance < 40 && timing < 30) {
+                // GOOD SHOT!
+                const shotQuality = Math.random() * 100;
+                let runs = 0;
+                let message = '';
+                let msgColor = '#FFFFFF';
+                
+                if (shotQuality > 90) {
+                    runs = 6;
+                    message = '🔥 SIX! 🔥';
+                    msgColor = '#00FF00';
+                } else if (shotQuality > 75) {
+                    runs = 4;
+                    message = '💥 FOUR! 💥';
+                    msgColor = '#00FF00';
+                } else if (shotQuality > 50) {
+                    runs = Math.floor(Math.random() * 3) + 1;
+                    message = `${runs} RUN${runs > 1 ? 'S' : ''}!`;
+                    msgColor = '#FFFF00';
+                } else {
+                    runs = 0;
+                    message = 'DEFENDED';
+                    msgColor = '#AAAAAA';
+                }
+                
+                gameState.score += runs;
+                
+                // Ball flies away
+                ball.speedX = (Math.random() - 0.5) * 10;
+                ball.speedY = -15;
+                
+                showTemporaryMessage(message, msgColor);
+                
+                setTimeout(() => {
+                    nextBall();
+                }, 1500);
+            }
+        }
+        
+        function checkWicket() {
+            const distance = Math.abs(ball.x - stumps.x);
+            const ballReachedStumps = ball.y >= stumps.y - 10;
+            
+            if (ballReachedStumps && distance < 30) {
+                // WICKET!
+                gameState.wickets++;
+                gameState.ballInMotion = false;
+                ball.visible = false;
+                
+                showTemporaryMessage('🏏 WICKET! 🏏', '#FF0000');
+                
+                if (gameState.wickets >= 10) {
+                    setTimeout(() => {
+                        gameOver(false);
+                    }, 2000);
+                } else {
+                    setTimeout(() => {
+                        nextBall();
+                    }, 2000);
+                }
+            }
+        }
+        
+        function nextBall() {
+            gameState.balls++;
+            gameState.ballsThisOver++;
+            
+            if (gameState.ballsThisOver >= 6) {
+                gameState.overs++;
+                gameState.ballsThisOver = 0;
+            }
+            
+            ball.visible = false;
+            ball.speedX = 0;
+            ball.speedY = 0;
+            gameState.ballInMotion = false;
+            
+            // Check game end conditions
+            if (gameState.overs >= gameState.totalOvers) {
+                if (gameState.score >= gameState.target) {
+                    levelUp();
+                } else {
+                    gameOver(false);
+                }
+                return;
+            }
+            
+            if (gameState.score >= gameState.target) {
+                levelUp();
+                return;
+            }
+            
+            setTimeout(() => {
+                bowlBall();
+            }, 1000);
+        }
+        
+        function levelUp() {
+            gameState.level++;
+            gameState.target = gameState.score + (gameState.level * 30);
+            gameState.totalOvers += 2;
+            gameState.overs = 0;
+            gameState.ballsThisOver = 0;
+            gameState.wickets = 0;
+            
+            showTemporaryMessage(`🎉 LEVEL ${gameState.level}! 🎉
+New Target: ${gameState.target}`, '#FFD700', 28);
+            
+            setTimeout(() => {
+                bowlBall();
+            }, 3000);
+        }
+        
+        function gameOver(won) {
+            gameState.gameStarted = false;
+            gameState.ballInMotion = false;
+            ball.visible = false;
+            
+            const message = won ? 
+                `🏆 YOU WON! 🏆
+Score: ${gameState.score}/${gameState.wickets}
+Click to Restart` :
+                `😢 GAME OVER 😢
+Score: ${gameState.score}/${gameState.wickets}
+Click to Restart`;
+            
+            const color = won ? '#00FF00' : '#FF0000';
+            
+            setTimeout(() => {
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fillRect(150, 200, 500, 200);
+                ctx.fillStyle = color;
+                ctx.font = 'bold 32px Arial';
+                ctx.textAlign = 'center';
+                const lines = message.split('
+');
+                lines.forEach((line, i) => {
+                    ctx.fillText(line, 400, 250 + i * 45);
+                });
+                ctx.textAlign = 'left';
+            }, 100);
+            
+            canvas.addEventListener('click', resetGame, { once: true });
+        }
+        
+        function resetGame() {
+            gameState = {
+                score: 0,
+                wickets: 0,
+                balls: 0,
+                overs: 0,
+                ballsThisOver: 0,
+                totalOvers: 5,
+                target: 50,
+                level: 1,
+                gameActive: false,
+                gameStarted: false,
+                ballInMotion: false
+            };
+            
+            ball.visible = false;
+            batsman.x = 400;
+        }
+        
+        let tempMessage = null;
+        function showTemporaryMessage(text, color) {
+            tempMessage = { text, color, time: Date.now() };
+        }
+        
+        // ==================== GAME UPDATE ====================
+        function update() {
+            // Move batsman
+            if (gameState.gameStarted) {
+                if (keys['ArrowLeft'] && batsman.x > 340) {
+                    batsman.x -= 4;
+                }
+                if (keys['ArrowRight'] && batsman.x < 460) {
+                    batsman.x += 4;
+                }
+                
+                // Mouse control
+                if (mouseX > 0) {
+                    const targetX = Math.max(340, Math.min(460, mouseX));
+                    batsman.x += (targetX - batsman.x) * 0.1;
+                }
+            }
+            
+            // Update ball
+            if (ball.visible && gameState.ballInMotion) {
+                ball.x += ball.speedX;
+                ball.y += ball.speedY;
+                
+                // Check wicket
+                if (ball.y >= stumps.y - 20 && ball.y <= stumps.y + 20) {
+                    checkWicket();
+                }
+                
+                // Ball out of bounds
+                if (ball.y > 600) {
+                    showTemporaryMessage('DOT BALL', '#FFFFFF');
+                    setTimeout(() => {
+                        nextBall();
+                    }, 1000);
+                }
+            }
+        }
+        
+        // ==================== GAME RENDER ====================
+        function render() {
+            // Clear canvas
+            ctx.clearRect(0, 0, 800, 600);
+            
+            // Draw game elements
+            drawPitch();
+            drawStumps();
+            drawBowler();
+            drawBatsman();
+            drawBall();
+            drawUI();
+            
+            // Draw temporary messages
+            if (tempMessage && Date.now() - tempMessage.time < 1500) {
+                drawMessage(tempMessage.text, tempMessage.color);
+            }
+            
+            // Draw start screen
+            if (!gameState.gameStarted) {
+                drawStartScreen();
+            }
+        }
+        
+        // ==================== GAME LOOP ====================
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Start the game
+        gameLoop();
+    </script>
 </body>
 </html>
