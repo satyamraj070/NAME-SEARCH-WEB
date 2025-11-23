@@ -10,6 +10,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
         
         body {
@@ -19,7 +20,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         
         .game-container {
@@ -143,43 +144,54 @@
         
         .batsman {
             position: absolute;
-            width: 30px;
-            height: 60px;
+            width: 40px;
+            height: 80px;
             bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
-            transition: transform 0.2s;
             z-index: 10;
+            transition: transform 0.2s;
         }
         
         .batsman-body {
             position: absolute;
-            width: 20px;
-            height: 40px;
+            width: 25px;
+            height: 50px;
             background: #1a237e;
             border-radius: 5px;
             bottom: 0;
-            left: 5px;
+            left: 7.5px;
         }
         
         .batsman-head {
             position: absolute;
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
             background: #ffccbc;
             border-radius: 50%;
-            bottom: 40px;
-            left: 7.5px;
+            bottom: 50px;
+            left: 10px;
+        }
+        
+        .batsman-helmet {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #333;
+            border-radius: 50%;
+            bottom: 48px;
+            left: 9px;
+            z-index: -1;
         }
         
         .bat {
             position: absolute;
-            width: 60px;
-            height: 5px;
+            width: 80px;
+            height: 6px;
             background: #5d4037;
             border-radius: 2px;
             bottom: 25px;
-            right: -50px;
+            right: -70px;
             transform-origin: left center;
             transform: rotate(-10deg);
             transition: transform 0.1s;
@@ -187,43 +199,78 @@
         
         .bowler {
             position: absolute;
-            width: 30px;
-            height: 60px;
+            width: 40px;
+            height: 80px;
             top: 50px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
+            animation: bowlAction 2s infinite;
         }
         
         .bowler-body {
             position: absolute;
-            width: 20px;
-            height: 40px;
+            width: 25px;
+            height: 50px;
             background: #b71c1c;
             border-radius: 5px;
             bottom: 0;
-            left: 5px;
+            left: 7.5px;
         }
         
         .bowler-head {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffccbc;
+            border-radius: 50%;
+            bottom: 50px;
+            left: 10px;
+        }
+        
+        .bowler-cap {
+            position: absolute;
+            width: 22px;
+            height: 10px;
+            background: #333;
+            border-radius: 50% 50% 0 0;
+            bottom: 60px;
+            left: 9px;
+        }
+        
+        .ball {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 5;
+            display: none;
+        }
+        
+        .fielders {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .fielder {
+            position: absolute;
+            width: 25px;
+            height: 40px;
+            background: #4caf50;
+            border-radius: 5px;
+        }
+        
+        .fielder-head {
             position: absolute;
             width: 15px;
             height: 15px;
             background: #ffccbc;
             border-radius: 50%;
-            bottom: 40px;
-            left: 7.5px;
-        }
-        
-        .ball {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background: #ffeb3b;
-            border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            z-index: 5;
-            transition: left 0.5s linear, top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            top: -15px;
+            left: 5px;
         }
         
         .controls {
@@ -275,7 +322,6 @@
             text-align: center;
             font-size: 1.5rem;
             z-index: 100;
-            display: none;
             box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
             border: 2px solid #ffcc00;
         }
@@ -326,6 +372,47 @@
             background: #ff9800;
         }
         
+        .ball-dot.boundary {
+            background: #2196f3;
+        }
+        
+        .power-meter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid white;
+        }
+        
+        .power-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4caf50, #ffeb3b, #f44336);
+            transition: width 0.1s;
+        }
+        
+        @keyframes bowlAction {
+            0% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(20px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+        
+        @keyframes batSwing {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(30deg); }
+            100% { transform: rotate(-10deg); }
+        }
+        
+        @keyframes hitEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
         @media (max-width: 600px) {
             .game-area {
                 height: 400px;
@@ -347,6 +434,10 @@
             .score-box {
                 min-width: 80px;
                 padding: 5px 10px;
+            }
+            
+            .power-meter {
+                width: 100px;
             }
         }
     </style>
@@ -370,6 +461,10 @@
         <div class="game-area">
             <div class="level-indicator">LEVEL: <span id="level">1</span></div>
             
+            <div class="power-meter">
+                <div class="power-fill" id="powerFill"></div>
+            </div>
+            
             <div class="cricket-field">
                 <div class="pitch"></div>
                 <div class="stumps">
@@ -380,21 +475,27 @@
                 </div>
             </div>
             
+            <div class="fielders" id="fielders">
+                <!-- Fielders will be added dynamically -->
+            </div>
+            
             <div class="batsman">
                 <div class="batsman-body"></div>
                 <div class="batsman-head"></div>
+                <div class="batsman-helmet"></div>
                 <div class="bat" id="bat"></div>
             </div>
             
             <div class="bowler">
                 <div class="bowler-body"></div>
                 <div class="bowler-head"></div>
+                <div class="bowler-cap"></div>
             </div>
             
             <div class="ball" id="ball"></div>
             
             <div class="game-message" id="gameMessage">
-                <div id="messageText">Get Ready!</div>
+                <div id="messageText">Advanced Cricket Game</div>
                 <button id="startButton" style="margin-top: 15px; padding: 10px 20px; background: #ffcc00; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">START GAME</button>
             </div>
         </div>
@@ -429,6 +530,8 @@
             const overDisplay = document.getElementById('overDisplay');
             const ball = document.getElementById('ball');
             const bat = document.getElementById('bat');
+            const powerFill = document.getElementById('powerFill');
+            const fieldersContainer = document.getElementById('fielders');
             
             // Shot buttons
             const defensiveShot = document.getElementById('defensiveShot');
@@ -446,22 +549,65 @@
                 target: 50,
                 gameActive: false,
                 ballInPlay: false,
-                currentBall: null
+                power: 0,
+                powerIncreasing: true,
+                powerInterval: null,
+                currentBall: null,
+                fielders: []
             };
             
             // Shot types with success probabilities and run values
             const shotTypes = {
-                defensive: { probability: 0.9, runs: [0, 1], batAngle: -5 },
-                drive: { probability: 0.7, runs: [2, 4], batAngle: 30 },
-                pull: { probability: 0.6, runs: [4, 6], batAngle: -60 },
-                sweep: { probability: 0.5, runs: [1, 2, 4], batAngle: 45 }
+                defensive: { 
+                    probability: 0.9, 
+                    runs: [0, 1], 
+                    batAngle: -5,
+                    powerMin: 0.2,
+                    powerMax: 0.5
+                },
+                drive: { 
+                    probability: 0.7, 
+                    runs: [2, 4], 
+                    batAngle: 30,
+                    powerMin: 0.4,
+                    powerMax: 0.8
+                },
+                pull: { 
+                    probability: 0.6, 
+                    runs: [4, 6], 
+                    batAngle: -60,
+                    powerMin: 0.6,
+                    powerMax: 1.0
+                },
+                sweep: { 
+                    probability: 0.5, 
+                    runs: [1, 2, 4], 
+                    batAngle: 45,
+                    powerMin: 0.3,
+                    powerMax: 0.7
+                }
             };
+            
+            // Fielding positions
+            const fieldingPositions = [
+                { left: '10%', top: '20%' },   // Slip
+                { left: '20%', top: '30%' },   // Gully
+                { left: '30%', top: '40%' },   // Point
+                { left: '40%', top: '50%' },   // Cover
+                { left: '60%', top: '50%' },   // Mid-off
+                { left: '70%', top: '40%' },   // Mid-on
+                { left: '80%', top: '30%' },   // Square leg
+                { left: '90%', top: '20%' },   // Fine leg
+                { left: '50%', top: '10%' },   // Long off
+                { left: '50%', top: '90%' }    // Long on
+            ];
             
             // Initialize the game
             function initGame() {
                 gameMessage.style.display = 'block';
                 messageText.textContent = 'Advanced Cricket Game';
                 updateDisplay();
+                createFielders();
                 
                 // Add event listeners to shot buttons
                 defensiveShot.addEventListener('click', () => playShot('defensive'));
@@ -470,6 +616,57 @@
                 sweepShot.addEventListener('click', () => playShot('sweep'));
                 
                 startButton.addEventListener('click', startGame);
+                
+                // Start power meter animation
+                startPowerMeter();
+            }
+            
+            // Create fielders
+            function createFielders() {
+                fieldersContainer.innerHTML = '';
+                gameState.fielders = [];
+                
+                for (let i = 0; i < 6 + gameState.level; i++) {
+                    const fielder = document.createElement('div');
+                    fielder.className = 'fielder';
+                    fielder.style.left = fieldingPositions[i % fieldingPositions.length].left;
+                    fielder.style.top = fieldingPositions[i % fieldingPositions.length].top;
+                    
+                    const fielderHead = document.createElement('div');
+                    fielderHead.className = 'fielder-head';
+                    
+                    fielder.appendChild(fielderHead);
+                    fieldersContainer.appendChild(fielder);
+                    
+                    gameState.fielders.push({
+                        element: fielder,
+                        position: fieldingPositions[i % fieldingPositions.length],
+                        caught: false
+                    });
+                }
+            }
+            
+            // Start power meter
+            function startPowerMeter() {
+                clearInterval(gameState.powerInterval);
+                
+                gameState.powerInterval = setInterval(() => {
+                    if (gameState.powerIncreasing) {
+                        gameState.power += 0.02;
+                        if (gameState.power >= 1) {
+                            gameState.power = 1;
+                            gameState.powerIncreasing = false;
+                        }
+                    } else {
+                        gameState.power -= 0.02;
+                        if (gameState.power <= 0) {
+                            gameState.power = 0;
+                            gameState.powerIncreasing = true;
+                        }
+                    }
+                    
+                    powerFill.style.width = `${gameState.power * 100}%`;
+                }, 50);
             }
             
             // Start the game
@@ -483,10 +680,15 @@
                     target: 50,
                     gameActive: true,
                     ballInPlay: false,
-                    currentBall: null
+                    power: 0,
+                    powerIncreasing: true,
+                    powerInterval: gameState.powerInterval,
+                    currentBall: null,
+                    fielders: []
                 };
                 
                 gameMessage.style.display = 'none';
+                createFielders();
                 updateDisplay();
                 bowlBall();
             }
@@ -507,7 +709,7 @@
                     if (i < gameState.balls % 6) {
                         // In a real game, we would track each ball's outcome
                         // For now, we'll randomly assign some outcomes
-                        const outcomes = ['run', 'wicket', 'dot'];
+                        const outcomes = ['run', 'wicket', 'dot', 'boundary'];
                         const randomOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
                         ballDot.classList.add(randomOutcome);
                     }
@@ -526,6 +728,10 @@
                 // Position ball at bowler
                 ball.style.left = '50%';
                 ball.style.top = '80px';
+                
+                // Reset power meter
+                gameState.power = 0;
+                gameState.powerIncreasing = true;
                 
                 // Animate ball towards batsman
                 const ballSpeed = 500 + (gameState.level * 100); // Speed increases with level
@@ -552,15 +758,19 @@
             function playShot(shotType) {
                 if (!gameState.ballInPlay || !gameState.gameActive) return;
                 
+                // Calculate shot power
+                const shot = shotTypes[shotType];
+                const powerFactor = gameState.power;
+                const effectivePower = shot.powerMin + (powerFactor * (shot.powerMax - shot.powerMin));
+                
                 // Animate bat swing
-                bat.style.transform = `rotate(${shotTypes[shotType].batAngle}deg)`;
+                bat.style.animation = 'batSwing 0.3s';
                 setTimeout(() => {
-                    bat.style.transform = 'rotate(-10deg)';
-                }, 200);
+                    bat.style.animation = '';
+                }, 300);
                 
                 // Check if shot is successful
-                const shot = shotTypes[shotType];
-                const isSuccessful = Math.random() < shot.probability;
+                const isSuccessful = Math.random() < (shot.probability * effectivePower);
                 
                 if (isSuccessful) {
                     // Successful shot - score runs
@@ -568,15 +778,19 @@
                     gameState.score += runs;
                     
                     // Animate ball based on shot type and runs
-                    animateShot(shotType, runs);
+                    animateShot(shotType, runs, effectivePower);
                     
                     // Check if target reached
                     if (gameState.score >= gameState.target) {
                         levelUp();
                     }
                 } else {
-                    // Unsuccessful shot - wicket
-                    wicket();
+                    // Unsuccessful shot - check for wicket or dot ball
+                    if (Math.random() < 0.7) {
+                        wicket();
+                    } else {
+                        dotBall();
+                    }
                 }
                 
                 gameState.ballInPlay = false;
@@ -598,33 +812,59 @@
             }
             
             // Animate shot based on shot type and runs
-            function animateShot(shotType, runs) {
+            function animateShot(shotType, runs, power) {
                 let left, top;
+                let animationTime = 1000;
                 
                 switch(shotType) {
                     case 'defensive':
                         left = '50%';
                         top = 'calc(50% + 60px)';
+                        animationTime = 800;
                         break;
                     case 'drive':
                         left = runs === 4 ? '90%' : '70%';
                         top = '30%';
+                        animationTime = 1200;
                         break;
                     case 'pull':
                         left = runs === 6 ? '10%' : '30%';
                         top = '20%';
+                        animationTime = 1000;
                         break;
                     case 'sweep':
                         left = runs === 4 ? '10%' : '30%';
                         top = '80%';
+                        animationTime = 1100;
                         break;
                 }
                 
+                // Apply power to animation
+                const powerMultiplier = 0.5 + (power * 0.5);
+                animationTime = animationTime / powerMultiplier;
+                
+                ball.style.transition = `left ${animationTime}ms linear, top ${animationTime}ms cubic-bezier(0.34, 1.56, 0.64, 1)`;
                 ball.style.left = left;
                 ball.style.top = top;
                 
-                // Show run message
-                showMessage(`${runs} RUN${runs > 1 ? 'S' : ''}!`, 1500);
+                // Check for catch
+                setTimeout(() => {
+                    if (runs === 6) {
+                        showMessage('SIXER!', 1500);
+                    } else if (runs === 4) {
+                        showMessage('FOUR!', 1500);
+                    } else {
+                        showMessage(`${runs} RUN${runs > 1 ? 'S' : ''}!`, 1500);
+                    }
+                    
+                    // Check if caught by fielder
+                    if (Math.random() < 0.2 && runs !== 6) {
+                        setTimeout(() => {
+                            wicket();
+                            showMessage('Caught Out!', 1500);
+                        }, 500);
+                    }
+                }, animationTime / 2);
             }
             
             // Wicket fall
@@ -636,7 +876,16 @@
                 ball.style.left = '50%';
                 ball.style.top = '50%';
                 
+                // Animate stumps falling
+                const stumps = document.querySelector('.stumps');
+                stumps.style.transform = 'translate(-50%, -50%) rotate(10deg)';
+                
                 showMessage('WICKET!', 1500);
+                
+                // Reset stumps after animation
+                setTimeout(() => {
+                    stumps.style.transform = 'translate(-50%, -50%)';
+                }, 1500);
                 
                 // Check if all wickets fallen
                 if (gameState.wickets >= 5) {
@@ -659,8 +908,19 @@
                 // Reset balls and overs for new level
                 gameState.balls = 0;
                 gameState.overs = 0;
+                gameState.wickets = 0;
+                
+                // Add more fielders
+                createFielders();
                 
                 updateDisplay();
+                
+                // Continue game after level up
+                setTimeout(() => {
+                    if (gameState.gameActive) {
+                        bowlBall();
+                    }
+                }, 2000);
             }
             
             // Game over
@@ -677,7 +937,7 @@
                 gameMessage.style.display = 'block';
                 
                 setTimeout(() => {
-                    if (gameState.gameActive) {
+                    if (gameState.gameActive && !gameState.ballInPlay) {
                         gameMessage.style.display = 'none';
                     }
                 }, duration);
